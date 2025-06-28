@@ -6,8 +6,6 @@ import MeetAISection from "../components/section/MeetAISection.jsx";
 import KeyFeatureAndBenefitsSection from "../components/section/KeyFeature&BenefitsSection.jsx";
 
 const Homepage = () => {
-
-
     return (
         <PublicLayout>
             <HeroSection />
@@ -18,5 +16,3 @@ const Homepage = () => {
         </PublicLayout>
     )
 }
-
-export default Homepage;
