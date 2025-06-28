@@ -1,34 +1,18 @@
-<<<<<<< HEAD
 import PublicLayout from "../layout/PublicLayout.jsx";
+import HeroSection from "../components/section/HeroSection.jsx";
+import TaglineSection from "../components/section/TaglineSection.jsx";
+import HowItWorksSection from "../components/section/HowItWorksSection.jsx";
+import MeetAISection from "../components/section/MeetAISection.jsx";
+import KeyFeatureAndBenefitsSection from "../components/section/KeyFeature&BenefitsSection.jsx";
 
 const Homepage = () => {
-
-
     return (
         <PublicLayout>
-            <div className="h-96 flex justify-center items-center">
-
-                <h1 className="text-h1 text-headingText font-bold ">Pawgrammers 411</h1>
-            </div>
+            <HeroSection />
+            <TaglineSection />
+            <HowItWorksSection />
+            <MeetAISection />
+            <KeyFeatureAndBenefitsSection />
         </PublicLayout>
     )
 }
-
-=======
-import PublicLayout from "../layout/PublicLayout.jsx";
-
-const Homepage = () => {
-
-
-    return (
-        <PublicLayout>
-            <div className="h-96 flex justify-center items-center">
-
-                <h1 className="text-h1 text-headingText font-bold ">Pawgrammers 411</h1>
-            </div>
-        </PublicLayout>
-    )
-}
-
->>>>>>> 63608e414e5aa11e4fbddf1989d12f25b2d7ad5b
-export default Homepage;
