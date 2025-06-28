@@ -21,17 +21,17 @@ const FreelanceSetupProfilepage = () => {
 
                 <form className="w-9/12 flex flex-col items-center" action="">
                     <div className="w-full formContainer grid grid-cols-2 gap-14">
-                        <div className="name">
+                        <div className="nameContainer">
                             <label htmlFor="userName">Name: *</label><br />
                             <input type="text" name="userName" id="userName" className="userName bg-bgColor2 rounded-md w-full h-14" />
                         </div>
 
-                        <div className="surname">
+                        <div className="surnameContainer">
                             <label htmlFor="userSurname">Surname: *</label><br />
                             <input type="text" name="userSurname" id="userSurname" className="userSurname bg-bgColor2 rounded-md w-full h-14" />
                         </div>
 
-                        <div className="jobPosition col-span-2">
+                        <div className="jobPositionContainer col-span-2">
                             <label htmlFor="userJobPosition">Job Position: *</label><br />
                             <input type="text" name="userJobPosition" id="userJobPosition" className="userJobPosition w-full bg-bgColor2 rounded-md h-14" />
                         </div>
