@@ -16,3 +16,5 @@ const Homepage = () => {
         </PublicLayout>
     )
 }
+
+export default Homepage;

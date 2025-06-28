@@ -8,6 +8,7 @@ import emailRoutes from './routes/email.js';
 import cookieParser from "cookie-parser";
 import csurf from "csurf";
 import { URL } from 'url';
+import connectDbB from "./config/db.js";
 
 dotenv.config();
 const app = express();
@@ -16,6 +17,8 @@ app.use((req, res, next) => {
     res.header("Access-Control-Allow-Credentials", true);
     next();
 });
+
+connectDbB();
 app.use(express.json());
 
 app.use(cors({
