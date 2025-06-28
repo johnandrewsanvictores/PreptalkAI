@@ -3,7 +3,7 @@
 const Nav = () => {
 
   return (
-    <nav className="bg-bgColor2 text-center p-4">
+    <nav className="bg-red text-center p-4">
       This is navbar
     </nav>
   )
