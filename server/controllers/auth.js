@@ -88,9 +88,8 @@ export const getUser = (req, res) => {
 }
 
 export const logout = (req, res, next) => {
-    req.logout(function(err) {
+    req.logout(function (err) {
         if (err) return next(err);
-        const redirectUrl = new URL(process.env.FRONTEND_BASE_URL);
 
         res.clearCookie('token', {
             httpOnly: true,
@@ -108,11 +107,12 @@ export const logout = (req, res, next) => {
                 sameSite: process.env.NODE_ENV === 'production' ? 'None' : false,
             });
 
-            redirectUrl.searchParams.set('reason', 'loggedout');
-            res.redirect(redirectUrl.toString());
+            // ✅ Just respond with JSON
+            res.status(200).json({ message: 'Logged out successfully' });
         });
     });
 };
+
 
 //user
 const createToken = (userId) => {

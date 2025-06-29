@@ -16,7 +16,7 @@ const router = express.Router();
 router.get('/google', google_authenticate);
 router.get('/google/callback', google_callback);
 router.get('/me', getUser);
-router.get('/logout', logout);
+router.post('/logout', logout);
 router.post('/signup', validateUserInfo, createUser);
 router.post('/signin', signIn);
 router.get('/user/profile', auth, async (req, res) => {
@@ -27,7 +27,7 @@ router.get('/user/profile', auth, async (req, res) => {
             return res.status(404).json({ error: 'User not found' });
         }
 
-        res.json(user);
+        res.json({user});
     } catch (err) {
         console.error('Profile error:', err);
         res.status(500).json({ error: 'Server error' });

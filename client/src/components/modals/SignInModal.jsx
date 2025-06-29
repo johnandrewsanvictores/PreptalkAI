@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import logo from "../../assets/PrepTalkAIlogo.png"
 import api from "../../../axious.js";
+import {useAuth} from "../../context/AuthContext.jsx";
 
 const SignInModal = ({ isOpen, onClose, onSwitchToSignUp }) => {
   const navigate = useNavigate()
@@ -10,7 +11,9 @@ const SignInModal = ({ isOpen, onClose, onSwitchToSignUp }) => {
     password: ''
   })
   const [error, setError] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false);
+
+  const { user, setUser } = useAuth();
 
   // Reset form when modal closes
   const resetForm = () => {
@@ -63,6 +66,8 @@ const SignInModal = ({ isOpen, onClose, onSwitchToSignUp }) => {
 
       const data = res.data;
 
+      setUser(data.user);
+      console.log(user);
       // Store user data from database response
       localStorage.setItem('user', JSON.stringify({
         id: data.user.id,
@@ -82,7 +87,7 @@ const SignInModal = ({ isOpen, onClose, onSwitchToSignUp }) => {
         navigate('/decide-user-type')
       } else {
         // Navigate to user's dashboard based on their type
-        navigate(data.user.userType === 'freelancer' ? '/freelancer-dashboard' : '/entrepreneur-dashboard')
+        navigate(data.user.userType === 'freelancer' ? '/freelancer-dashboard' : '/')
       }
 
       
