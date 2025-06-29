@@ -6,7 +6,7 @@ import {
     getUser,
     logout,
     createUser,
-    validateUserInfo, signIn
+    validateUserInfo, signIn, updateUser
 } from "../controllers/auth.js";
 import auth from "../middleware/auth.js";
 import User from "../models/userModel.js";
@@ -19,6 +19,9 @@ router.get('/me', getUser);
 router.post('/logout', logout);
 router.post('/signup', validateUserInfo, createUser);
 router.post('/signin', signIn);
+router.put('/updateUser', updateUser);
+
+
 router.get('/user/profile', auth, async (req, res) => {
     try {
         const user = await User.findById(req.user.userId).select('-password'); // exclude password

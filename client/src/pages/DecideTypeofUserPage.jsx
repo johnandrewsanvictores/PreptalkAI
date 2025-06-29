@@ -1,16 +1,64 @@
-import { useNavigate } from 'react-router-dom'
+import {redirect, useNavigate} from 'react-router-dom'
 import Navbar from '../components/navigation/Nav.jsx'
 import Footer from '../components/navigation/Footer.jsx'
+import {showConfirmation, showError} from "../utils/alertHelper.js";
+import api from "../../axious.js";
+import {useAuth} from "../context/AuthContext.jsx";
 
 const DecideTypeofUserPage = () => {
   const navigate = useNavigate()
+  const {user, setUser} = useAuth();
 
-  const handleFreelancerChoice = () => {
-    navigate('/freelancer-setup-profile')
+  const handleFreelancerChoice =async () => {
+    const isConfirmed = await showConfirmation({
+      title: "Are you sure you want to continue as a Freelancer?",
+      text: "This will set up your profile for freelancer scenarios and training.",
+      confirmButtonText: "Yes, continue",
+      cancelButtonText: "No, go back"
+    })
+
+    if (isConfirmed) {
+      console.log("Hi");
+      const response = await api.put("/auth/updateUser", {
+        _id: user.userId,
+        isFirstVisit: false,
+        userType: 'freelancer'
+      });
+
+
+      if(response.status === 200) {
+        setUser({...user, isFirstVisit: false, userType: 'freelancer'});
+        navigate("/dashboard");
+      }else {
+        showError("Something went wrong!", "Error");
+      }
+    }
   }
 
-  const handleMicroEntrepreneurChoice = () => {
-    navigate('/micro-entrepreneur-setup-profile')
+  const handleMicroEntrepreneurChoice = async () => {
+    const isConfirmed = await showConfirmation({
+      title: "Are you sure you want to continue as a Micro Entrepreneur?",
+      text: "This will set up your profile for micro entrepreneur scenarios and training.",
+      confirmButtonText: "Yes, continue",
+      cancelButtonText: "No, go back"
+    })
+
+    if (isConfirmed) {
+      console.log("Hi");
+      const response = await api.put("/auth/updateUser", {
+        _id: user.userId,
+        isFirstVisit: false,
+        userType: 'entrep'
+      });
+
+
+      if(response.status === 200) {
+        setUser({...user, isFirstVisit: false, userType: 'entrep'});
+        navigate("/settings");
+      }else {
+        showError("Something went wrong!", "Error");
+      }
+    }
   }
 
   return (
