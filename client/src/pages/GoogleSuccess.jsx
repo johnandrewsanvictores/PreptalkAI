@@ -16,13 +16,14 @@ const GoogleSuccess = () => {
 
                 const data = res.data;
 
-                setUser(data);
+                setUser(data.user);
+
 
                 // Redirect based on user visit status
-                if (data.isFirstVisit) {
+                if (data.user.isFirstVisit) {
                     navigate('/decide-user-type');
                 } else {
-                    navigate(data.userType === 'freelancer' ? '/freelancer-dashboard' : '/entrepreneur-dashboard');
+                    navigate(data.user.userType === 'freelancer' ? '/freelancer-dashboard' : '/entrepreneur-dashboard');
                 }
             } catch (err) {
                 alert('Failed to verify session. Please log in again.');

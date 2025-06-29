@@ -8,6 +8,13 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 dotenv.config();
 
+function generateUsername(givenName) {
+    const name = givenName.toLowerCase().replace(/\s+/g, ''); // lowercase + no spaces
+    const randomNum = Math.floor(1000 + Math.random() * 9000); // 4-digit random
+    return `${name}${randomNum}`;
+}
+
+
 passport.use(new GoogleStrategy({
             clientID: process.env.GOOGLE_CLIENT_ID,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET,
@@ -27,7 +34,8 @@ passport.use(new GoogleStrategy({
                         password: null,
                         email: profile._json.email, // Make sure 'email' scope is enabled!
                         googleId: profile.id,
-                    })
+                        username: generateUsername(profile._json.given_name)
+                    });
                 }
 
                 return done(null, user);
@@ -196,7 +204,9 @@ export const signIn = async (req, res) => {
                 firstName: user.firstName,
                 lastName: user.lastName,
                 email: user.email,
-                username: user.username
+                username: user.username,
+                userType: user.userType,
+                isFirstVisit: user.isFirstVisit
             }
         });
 
