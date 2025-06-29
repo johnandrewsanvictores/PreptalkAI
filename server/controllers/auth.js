@@ -216,6 +216,21 @@ export const signIn = async (req, res) => {
 };
 
 
+export const updateUser =  async (req, res) => {
+    try {
+        const { _id, ...updateFields } = req.body;
+
+        const updatedUser = await User.findByIdAndUpdate(
+            _id,
+            { $set: updateFields },
+            { new: true }
+        );
+
+        res.status(200).json({ success: true, user: updatedUser, message: "Updated user successfully" });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
 
 
 
