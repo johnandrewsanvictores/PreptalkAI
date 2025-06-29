@@ -2,10 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
+@layer base { 
   body {
     @apply bg-bgColor text-subHeadingText font-nunito;
-    cursor: pointer;
+    background-color: #F3F7FB;
   }
 }
 
