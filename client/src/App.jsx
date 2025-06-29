@@ -14,6 +14,8 @@ import InterviewHistory from "./pages/InterviewHistory.jsx";
 import InterviewSessionDetails from "./pages/InterviewSessionDetails.jsx";
 import Analytics from "./pages/Analytics.jsx";
 import {useAuth} from "./context/AuthContext.jsx";
+import Aboutpage from "./pages/Aboutpage.jsx";
+import Settings from "./pages/settings.jsx";
 
 function App() {
   const PrivateRoute = () => {
@@ -45,10 +47,13 @@ function App() {
           <Route path="/interview-history" element={<InterviewHistory />} />
           <Route path="/interview-session-details" element={<InterviewSessionDetails />} />
           <Route path="/analytics" element={<Analytics />} />
+          <Route path="/about" element={<Aboutpage />} />
+          <Route path="/settings" element={<Settings />} />
         </Route>
+
       </Routes>
     </>
-  )
+  );
 }
 
-export default App
+export default App;

@@ -1,96 +1,210 @@
-import React from 'react';
-import PublicLayout from '../layout/PublicLayout.jsx';
+import React, { useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import PublicLayout from "../layout/PublicLayout.jsx";
 
 export default function InterviewSessionDetails() {
+  const [activeQuestion, setActiveQuestion] = useState(1);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const sessionData = location.state || {};
+  const sessionTitle =
+    sessionData.sessionTitle || "Technical Interview - Software Engineer";
+  const interviewType = sessionData.interviewType || "Technical Interview";
+  const sessionStatus = sessionData.sessionStatus || "88%";
+  const sessionDate = sessionData.sessionDate || "12-15-2024";
+
+  const handleBackToHistory = () => {
+    navigate("/interview-history");
+  };
+
+  const questions = {
+    1: "Tell me about yourself and why you're interested in this position?",
+    2: "What are your greatest strengths and how do they apply to this role?",
+    3: "Describe a challenging situation you faced at work and how you handled it.",
+    4: "Where do you see yourself in 5 years and how does this role fit into your career goals?",
+    5: "What do you know about our company and why do you want to work here?",
+    6: "How do you handle working under pressure and tight deadlines?",
+    7: "Do you have any questions for us about the role or company?",
+  };
   return (
     <PublicLayout>
-      <div className="min-h-screen flex flex-col bg-[#f8fafc]">
-        <main className="flex-1 flex flex-col items-center py-8 px-2">
-          <div className="w-full max-w-6xl">
-
-
-            <div className="bg-white shadow p-4 rounded-t-lg border-b border-gray-200 flex flex-col gap-2 mb-6">
-              <span className="text-xs text-blue-600 cursor-pointer">&lt; Back to History</span>
-              <h1 className="text-2xl font-semibold">Interview Session Details</h1>
-              <p className="text-gray-500 text-sm">Review your performance and feedback</p>
+      <div className="min-h-screen flex flex-col bg-bgColor">
+        <main className="flex-1 flex flex-col items-center py-12 px-4">
+          <div className="w-full max-w-7xl">
+            <div className="bg-bgColor2 shadow-lg p-8 rounded-t-xl border-b border-gray-200 flex flex-col gap-4 mb-8">
+              <button
+                className="text-h6 text-primary cursor-pointer hover:text-primary/80 transition-colors flex items-center gap-2 font-medium w-fit"
+                onClick={handleBackToHistory}
+              >
+                &lt; Back to History
+              </button>
+              <h1 className="text-h2 font-semibold text-headingText">
+                Interview Session Details
+              </h1>
+              <p className="text-subHeadingText text-h6">
+                Review your performance and feedback
+              </p>
             </div>
 
-
-            <div className="flex flex-col lg:flex-row gap-6">
-             
-              <div className="bg-white rounded-lg shadow p-6 w-full lg:w-1/3 flex flex-col gap-4 self-stretch">
-                <div className="flex flex-col gap-2 overflow-y-auto max-h-[455px] pr-2 flex-1">
-                  {[1,2,3,4,5,6,7].map((q) => (
-                    <div key={q} className="flex justify-between items-center py-1 border-b last:border-b-0">
-                      <span className="font-medium text-gray-700">Question {q}:</span>
-                      <button className="text-blue-600 text-sm hover:underline">Show</button>
+            <div className="flex flex-col lg:flex-row gap-8">
+              <div className="bg-bgColor2 rounded-xl shadow-lg p-8 w-full lg:w-1/3 flex flex-col gap-6 self-stretch">
+                <div className="mb-4">
+                  <h3 className="text-h5 font-semibold text-headingText mb-2">
+                    {sessionTitle}
+                  </h3>
+                  <p className="text-small text-subHeadingText">
+                    {sessionDate}
+                  </p>
+                </div>
+                <div className="flex flex-col gap-4 overflow-y-auto max-h-[500px] pr-4 flex-1">
+                  {[1, 2, 3, 4, 5, 6, 7].map((q) => (
+                    <div
+                      key={q}
+                      className={`flex justify-between items-center py-3 border-b last:border-b-0 ${
+                        q === activeQuestion
+                          ? "bg-primary/10 px-4 rounded-lg border-l-4 border-l-primary"
+                          : ""
+                      }`}
+                    >
+                      <span className="font-medium text-headingText text-h6">
+                        Question {q}:
+                      </span>
+                      {q !== activeQuestion && (
+                        <button
+                          className="text-primary text-h6 hover:underline"
+                          onClick={() => setActiveQuestion(q)}
+                        >
+                          Show
+                        </button>
+                      )}
                     </div>
                   ))}
                 </div>
-                <div className="mt-auto border-t pt-4 flex flex-col gap-2">
+                <div className="mt-auto border-t pt-6 flex flex-col gap-4">
                   <div className="flex justify-between items-center">
-                    <span className="text-xs text-gray-500">Interview Type:</span>
-                    <span className="font-semibold text-gray-700">Technical Interview</span>
+                    <span className="text-h6 text-subHeadingText">
+                      Interview Type:
+                    </span>
+                    <span className="font-semibold text-headingText text-h6">
+                      {interviewType}
+                    </span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-xs text-gray-500">Overall Score:</span>
-                    <span className="text-green-600 font-bold">88%</span>
+                    <span className="text-h6 text-subHeadingText">
+                      Overall Score:
+                    </span>
+                    <span className="text-green-600 font-bold text-h6">
+                      {sessionStatus}
+                    </span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-xs text-gray-500">Duration:</span>
-                    <span className="text-gray-700">45min</span>
+                    <span className="text-h6 text-subHeadingText">
+                      Duration:
+                    </span>
+                    <span className="text-headingText text-h6">45min</span>
                   </div>
                 </div>
               </div>
 
-              
-              <div className="flex-1 flex flex-col gap-6 self-stretch">
-                <div className="bg-white rounded-lg shadow p-6 flex flex-col gap-4 h-full">
-                  <div className="font-semibold text-lg">Question 1:</div>
-                  <div className="text-gray-600 text-sm">Lorem ipsum dolor sit amet consectetur. Egestas et nibh velit quis nibh euismod.</div>
-                  <div className="flex justify-center my-4">
+              <div className="flex-1 flex flex-col gap-8 self-stretch">
+                <div className="bg-bgColor2 rounded-xl shadow-lg p-8 flex flex-col gap-6 h-full">
+                  <div className="font-semibold text-h5 text-headingText">
+                    Question {activeQuestion}:
+                  </div>
+                  <div className="text-subHeadingText text-h6">
+                    {questions[activeQuestion]}
+                  </div>
+                  <div className="text-subHeadingText text-h6 mt-4">
+                    Your Response:
+                  </div>
+                  <div className="flex justify-center my-6">
                     <video
                       src="/video/interview_sample.mp4"
                       controls
-                      className="rounded-lg w-full max-w-2xl h-96 object-cover bg-black"
+                      className="rounded-xl w-full max-w-2xl h-96 object-cover bg-black shadow-lg"
                     >
                       Your browser does not support the video tag.
                     </video>
                   </div>
                   <div>
-                    <label className="block text-gray-700 font-medium mb-1">Comment for your response on this</label>
+                    <label className="block text-headingText font-medium mb-3 text-h6">
+                      Feedback Based on Your Response
+                    </label>
                     <textarea
-                      className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-200"
-                      rows={2}
+                      className="w-full border border-gray-300 rounded-lg p-4 focus:outline-none focus:ring-2 focus:ring-primary/20 text-p"
+                      rows={3}
                       placeholder="Leave your comment here..."
                       disabled
-                    >Lorem ipsum dolor sit amet consectetur. Egestas et nibh velit quis nibh euismod.</textarea>
+                    >
+                      Lorem ipsum dolor sit amet consectetur. Egestas et nibh
+                      velit quis nibh euismod.
+                    </textarea>
                   </div>
                 </div>
               </div>
             </div>
-          
-            <div className="bg-white rounded-lg shadow p-6 mt-6 w-full">
-              <div className="w-full max-w-3xl mx-auto">
-                <h2 className="text-lg font-semibold mb-4">Detailed Feedback</h2>
-                <div className="pl-4 md:pl-6">
-                  <div className="mb-5">
-                    <h3 className="text-green-600 font-bold">Strengths</h3>
-                    <ul className="list-disc ml-6 text-gray-700 text-sm">
-                      <li>Lorem ipsum dolor sit amet consectetur. Mauris id velit vitae ultricies erat tempor bibendum porttitor tincidunt.</li>
-                      <li>Lorem ipsum dolor sit amet consectetur. Mauris id velit vitae ultricies erat tempor bibendum porttitor tincidunt.</li>
+
+            <div className="bg-bgColor2 rounded-xl shadow-lg p-8 mt-8 w-full">
+              <div className="w-full">
+                <h2 className="text-h3 font-semibold mb-8 text-headingText">
+                  Detailed Feedback
+                </h2>
+                <div className="pl-0">
+                  <div className="mb-8">
+                    <h3 className="text-green-600 font-bold text-h4 mb-4">
+                      Strengths
+                    </h3>
+                    <ul className="list-disc ml-8 text-subHeadingText text-h6 space-y-2">
+                      <li>
+                        You spoke clearly and maintained good pacing throughout
+                        the session.
+                      </li>
+                      <li>
+                        Your response to “Tell me about yourself” was concise
+                        and well-structured.
+                      </li>
+                      <li>
+                        You confidently explained your role and the value you
+                        offer to clients/customers.
+                      </li>
                     </ul>
                   </div>
-                  <div className="mb-5">
-                    <h3 className="text-red-500 font-bold">Areas for Improvement</h3>
-                    <ul className="list-disc ml-6 text-gray-700 text-sm">
-                      <li>Lorem ipsum dolor sit amet consectetur. Mauris id velit vitae ultricies erat tempor bibendum porttitor tincidunt.</li>
+                  <div className="mb-8">
+                    <h3 className="text-red font-bold text-h4 mb-4">
+                      Areas for Improvement
+                    </h3>
+                    <ul className="list-disc ml-8 text-subHeadingText text-h6 space-y-2">
+                      <li>
+                        You used a few filler words (like “um” or “ah”) that
+                        could affect clarity.
+                      </li>
+                      <li>
+                        Some answers lacked specific examples — adding real
+                        experiences could make them stronger.
+                      </li>
+                      <li>
+                        There was slight hesitation when asked about handling
+                        client concerns. Try rehearsing difficult scenarios.
+                      </li>
                     </ul>
                   </div>
                   <div>
-                    <h3 className="text-blue-600 font-bold">Recommendations</h3>
-                    <ul className="list-disc ml-6 text-gray-700 text-sm">
-                      <li>Lorem ipsum dolor sit amet consectetur. Mauris id velit vitae ultricies erat tempor bibendum porttitor tincidunt.</li>
+                    <h3 className="text-primary font-bold text-h4 mb-4">
+                      Recommendations
+                    </h3>
+                    <ul className="list-disc ml-8 text-subHeadingText text-h6 space-y-2">
+                      <li>
+                        Practice answering with real examples from past work to
+                        increase credibility and trust.
+                      </li>
+                      <li>
+                        Record yourself during practice to catch filler words
+                        and adjust your tone.
+                      </li>
+                      <li>
+                        Focus on the “why” behind your business decisions or
+                        freelancing choices to show confidence and insight.
+                      </li>
                     </ul>
                   </div>
                 </div>
@@ -101,4 +215,4 @@ export default function InterviewSessionDetails() {
       </div>
     </PublicLayout>
   );
-} 
+}
