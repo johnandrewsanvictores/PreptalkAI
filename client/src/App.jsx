@@ -33,6 +33,7 @@ function App() {
     <>
       <Routes>
         <Route path="/" element={<Homepage />} />
+        <Route path="/about" element={<Aboutpage />} />
 
         <Route element={<PrivateRoute />}>
           <Route path="/freelancer-setup-profile" element={<FreelanceSetupProfilepage />} />
@@ -47,7 +48,6 @@ function App() {
           <Route path="/interview-history" element={<InterviewHistory />} />
           <Route path="/interview-session-details" element={<InterviewSessionDetails />} />
           <Route path="/analytics" element={<Analytics />} />
-          <Route path="/about" element={<Aboutpage />} />
           <Route path="/settings" element={<Settings />} />
         </Route>
 
