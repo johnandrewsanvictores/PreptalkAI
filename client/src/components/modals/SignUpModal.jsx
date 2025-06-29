@@ -81,6 +81,8 @@ const SignUpModal = ({ isOpen, onClose, onSwitchToSignIn }) => {
 
     try {
       // Database API call to your registration endpoint
+
+
       const response = await fetch('/api/auth/signup', {
         method: 'POST',
         headers: {
@@ -124,6 +126,10 @@ const SignUpModal = ({ isOpen, onClose, onSwitchToSignIn }) => {
     }
     
     setIsLoading(false)
+  }
+
+  const handleGoogleLogin = () => {
+    window.location.href = 'http://localhost:3000/auth/google';
   }
 
   const togglePasswordVisibility = () => {
@@ -330,6 +336,7 @@ const SignUpModal = ({ isOpen, onClose, onSwitchToSignIn }) => {
             type="button"
             className="w-full border border-gray-300 rounded-full py-3 flex items-center justify-center space-x-2 hover:bg-gray-50 transition-colors"
             disabled={isLoading}
+            onClick={handleGoogleLogin}
           >
             <svg className="h-5 w-5" viewBox="0 0 24 24">
               <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
