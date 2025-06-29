@@ -120,7 +120,7 @@ ${rawText}
                 {/* Manual Info Form */}
                 <form className="w-9/12 flex flex-col items-center" action="">
                     <div className="w-full formContainer grid grid-cols-2 gap-14">
-                        <div className="name">
+                        <div className="nameContainer">
                             <label htmlFor="userName">Name: *</label><br />
                             <input
                                 type="text"
@@ -130,7 +130,7 @@ ${rawText}
                             />
                         </div>
 
-                        <div className="surname">
+                        <div className="surnameContainer">
                             <label htmlFor="userSurname">Surname: *</label><br />
                             <input
                                 type="text"
@@ -140,7 +140,7 @@ ${rawText}
                             />
                         </div>
 
-                        <div className="jobPosition col-span-2">
+                        <div className="jobPositionContainer">
                             <label htmlFor="userJobPosition">Job Position: *</label><br />
                             <input
                                 type="text"
