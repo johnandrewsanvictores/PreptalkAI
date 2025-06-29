@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import logo from "../../assets/PrepTalkAIlogo.png"
+import api from "../../../axious.js";
+import {useAuth} from "../../context/AuthContext.jsx";
 
 const SignInModal = ({ isOpen, onClose, onSwitchToSignUp }) => {
   const navigate = useNavigate()
@@ -9,7 +11,9 @@ const SignInModal = ({ isOpen, onClose, onSwitchToSignUp }) => {
     password: ''
   })
   const [error, setError] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false);
+
+  const { user, setUser } = useAuth();
 
   // Reset form when modal closes
   const resetForm = () => {
@@ -55,50 +59,51 @@ const SignInModal = ({ isOpen, onClose, onSwitchToSignUp }) => {
 
     try {
       // Database API call to your authentication endpoint
-      const response = await fetch('/api/auth/signin', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          username: formData.username,
-          password: formData.password
-        })
-      })
+      const res = await api.post('/auth/signin', {
+        username: formData.username,
+        password: formData.password
+      });
 
-      const data = await response.json()
+      const data = res.data;
 
-      if (response.ok) {
-        // Store user data from database response
-        localStorage.setItem('user', JSON.stringify({
-          id: data.user.id,
-          username: data.user.username,
-          email: data.user.email,
-          userType: data.user.userType, // 'freelancer' or 'micro-entrepreneur'
-          isLoggedIn: true,
-          isFirstVisit: data.user.isFirstVisit,
-          token: data.token
-        }))
-        
-        // Close modal and navigate based on user status
-        resetForm()
-        onClose()
-        if (data.user.isFirstVisit) {
-          navigate('/decide-user-type')
-        } else {
-          // Navigate to user's dashboard based on their type
-          navigate(data.user.userType === 'freelancer' ? '/freelancer-dashboard' : '/entrepreneur-dashboard')
-        }
+      setUser(data.user);
+      console.log(user);
+      // Store user data from database response
+      localStorage.setItem('user', JSON.stringify({
+        id: data.user.id,
+        username: data.user.username,
+        email: data.user.email,
+        firstName: data.user.firstName,
+        lastName: data.user.lastName,
+        userType: data.user.userType, // 'freelancer' or 'micro-entrepreneur'
+        isLoggedIn: true,
+        isFirstVisit: data.user.isFirstVisit,
+      }))
+
+      // Close modal and navigate based on user status
+      resetForm()
+      onClose()
+      if (data.user.isFirstVisit) {
+        navigate('/decide-user-type')
       } else {
-        setError(data.message || 'Invalid credentials')
+        // Navigate to user's dashboard based on their type
+        navigate(data.user.userType === 'freelancer' ? '/freelancer-dashboard' : '/')
       }
+
       
     } catch (error) {
-      console.error('Authentication error:', error)
-      setError('An error occurred during sign in. Please try again.')
+      if (error.response && error.response.status === 400) {
+        setError(error.response.data.error || 'Invalid credentials');
+      } else {
+        setError('An error occurred during sign in. Please try again.');
+      }
     }
     
     setIsLoading(false)
+  }
+
+  const handleGoogleLogin = () => {
+    window.location.href = 'http://localhost:3000/auth/google';
   }
 
   if (!isOpen) return null
@@ -211,6 +216,7 @@ const SignInModal = ({ isOpen, onClose, onSwitchToSignUp }) => {
             type="button"
             className="w-full border border-gray-300 rounded-full py-3 flex items-center justify-center space-x-2 hover:bg-gray-50 transition-colors"
             disabled={isLoading}
+            onClick={handleGoogleLogin}
           >
             <svg className="h-5 w-5" viewBox="0 0 24 24">
               <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>

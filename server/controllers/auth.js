@@ -54,7 +54,7 @@ passport.deserializeUser(async (id, done) => {
 export default passport;
 export const google_authenticate = passport.authenticate('google', {
     scope: ['profile', 'email'],
-    // prompt: 'select_account'
+    prompt: 'select_account'
 });
 
 export const google_callback = (req, res, next) => {
@@ -63,8 +63,19 @@ export const google_callback = (req, res, next) => {
 
         req.logIn(user, (err) => {
             if (err) return next(err);
+            const token = jwt.sign({ userId: req.user._id }, process.env.JWT_SECRET, {
+                expiresIn: '7d',
+            });
 
-            res.redirect(process.env.FRONTEND_BASE_URL);
+            res.cookie('token', token, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === 'production',
+                sameSite: process.env.NODE_ENV === 'production' ? 'None' : false,
+                maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+            });
+
+
+            res.redirect(`${process.env.FRONTEND_BASE_URL}/google-success`);
         });
     })(req, res, next);
 }
@@ -77,9 +88,14 @@ export const getUser = (req, res) => {
 }
 
 export const logout = (req, res, next) => {
-    req.logout(function(err) {
+    req.logout(function (err) {
         if (err) return next(err);
-        const redirectUrl = new URL(process.env.FRONTEND_BASE_URL);
+
+        res.clearCookie('token', {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'Strict',
+        });
 
         req.session.destroy(err => {
             if (err) return next(err);
@@ -88,14 +104,15 @@ export const logout = (req, res, next) => {
                 path: '/',
                 httpOnly: true,
                 secure: process.env.NODE_ENV === 'production',
-                sameSite: 'lax', // or 'strict'
+                sameSite: process.env.NODE_ENV === 'production' ? 'None' : false,
             });
 
-            redirectUrl.searchParams.set('reason', 'loggedout');
-            res.redirect(redirectUrl.toString());
+            // ✅ Just respond with JSON
+            res.status(200).json({ message: 'Logged out successfully' });
         });
     });
 };
+
 
 //user
 const createToken = (userId) => {
@@ -117,24 +134,32 @@ export const createUser = async (req, res) => {
 
         if (users) {
             if (users.email === email) {
-                return res.status(409).json({ msg: "Email already exists" });
+                return res.status(409).json({ error: "Email already exists" });
             }
             if (users.username === username) {
-                return res.status(409).json({ msg: "Username already exists" });
+                return res.status(409).json({ error: "Username already exists" });
             }
         }
 
         const user = await User.create({firstName, lastName,email, password: hashedPassword, username});
         const token = createToken(user._id);
+        res.cookie('token', token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production', // only on HTTPS in production
+            sameSite: 'Strict',
+            maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+        });
 
-        res.status(201).json({token,
+        res.status(201).json({
             user: {
             userId : user._id,
             firstName: user.firstName,
             lastName: user.lastName,
             email: user.email,
             username: user.username
-            }
+            },
+            success: "true",
+            message: "User created successfully"
         });
     } catch(error) {
         res.status(500).json({ message: 'Server error', error: err.message });
@@ -157,8 +182,15 @@ export const signIn = async (req, res) => {
         // 3. Create token
         const token = createToken(user._id);
 
+        res.cookie('token', token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production', // only on HTTPS in production
+            sameSite: 'Strict',
+            maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+        });
+
         // 4. Send token and user info (without password)
-        res.status(200).json({token,
+        res.status(200).json({
             user: {
                 userId : user._id,
                 firstName: user.firstName,
@@ -191,7 +223,7 @@ export const validateUserInfo = [
         if (!errors.isEmpty()) {
             return res.status(400).json({
                 status: 'error',
-                msg: errors.array()[0].msg,
+                error: errors.array()[0].msg,
             });
         }
         next();

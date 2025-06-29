@@ -9,6 +9,8 @@ const userSchema = new mongoose.Schema({
     password: { type: String, required: false },
     googleId: { type: String, required: false },
     rememberToken: { type: String, required: false },
+    isFirstVisit: {type: Boolean, default: true },
+    userType: {type: String, default: null}
 }, { timestamps: true });
 
 const User = mongoose.model('User', userSchema);
