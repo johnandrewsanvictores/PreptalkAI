@@ -89,6 +89,10 @@ const Nav = () => {
     setIsDropdownOpen(!isDropdownOpen)
   }
 
+  const handleStartInterview = () => {
+    navigate('/interview-settings')
+  }
+
   if (loading) return <p>Loading...</p>
 
   return (
@@ -106,7 +110,7 @@ const Nav = () => {
 
             {/* Desktop Navigation */}
             <div className="hidden lg:flex lg:justify-center lg:flex-1">
-              <div className="flex space-x-6 xl:space-x-10">
+              <div className="flex space-x-6 xl:space-x-10 items-center">
                 {
                   user ? (
                       <>
@@ -114,12 +118,10 @@ const Nav = () => {
                         <NavLink to="/interview-history" className={getNavLinkClass}>Interview History</NavLink>
                         <NavLink to="/analytics" className={getNavLinkClass}>Analytics</NavLink>
                         <NavLink to="/billing" className={getNavLinkClass}>Billing</NavLink>
-                        <NavLink to="/settings" className={getNavLinkClass}>Settings</NavLink>
                       </>
                   ) : (
                       <>
                         <NavLink to="/" className={getNavLinkClass}>Home</NavLink>
-                        <NavLink to="/start_interview" className={getNavLinkClass}>Start Interview</NavLink>
                         <NavLink to="/about" className={getNavLinkClass}>About</NavLink>
                       </>
                   )
@@ -128,7 +130,17 @@ const Nav = () => {
             </div>
 
             {/* Desktop Auth Buttons */}
-            <div className="hidden lg:flex lg:justify-end lg:relative">
+            <div className="hidden lg:flex lg:justify-end lg:items-center lg:space-x-4">
+              {user && (
+                  <button
+                      onClick={handleStartInterview}
+                      className="bg-gradient-to-r from-primary to-blue-600 text-white px-6 py-2 rounded-lg text-lg font-semibold hover:opacity-90 transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 flex items-center space-x-2"
+                  >
+                    <i className="fas fa-play-circle"></i>
+                    <span>Start Interview</span>
+                  </button>
+              )}
+
               {
                 user ? (
                     <div className="relative">
@@ -139,7 +151,6 @@ const Nav = () => {
                         <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white font-medium">
                           {user.firstName.charAt(0)}
                         </div>
-                        <p className="text-lg font-medium">{user.firstName}</p>
                         <i className={`fa-solid fa-caret-down transition-transform duration-200 ${isDropdownOpen ? "rotate-180" : ""}`}></i>
                       </div>
 
@@ -149,6 +160,13 @@ const Nav = () => {
                               <p className="font-medium">{user.firstName} {user.lastName}</p>
                               <p className="text-sm text-gray-500 truncate">{user.email}</p>
                             </div>
+                            <NavLink
+                                to="/settings"
+                                className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
+                                onClick={() => setIsDropdownOpen(false)}
+                            >
+                              Settings
+                            </NavLink>
                             <button
                                 onClick={handleLogout}
                                 className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 flex items-center space-x-2"
@@ -175,6 +193,12 @@ const Nav = () => {
               {
                 user ? (
                     <div className="flex items-center space-x-4">
+                      <button
+                          onClick={handleStartInterview}
+                          className="bg-primary text-white p-2 rounded-lg"
+                      >
+                        <i className="fas fa-play-circle text-lg"></i>
+                      </button>
                       <div
                           onClick={toggleDropdown}
                           className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white font-medium cursor-pointer"
@@ -284,13 +308,6 @@ const Nav = () => {
                             Home
                           </NavLink>
                           <NavLink
-                              to="/start_interview"
-                              className="px-4 py-3 hover:bg-gray-50 font-medium text-gray-700"
-                              onClick={() => setIsMobileMenuOpen(false)}
-                          >
-                            Start Interview
-                          </NavLink>
-                          <NavLink
                               to="/about"
                               className="px-4 py-3 hover:bg-gray-50 font-medium text-gray-700"
                               onClick={() => setIsMobileMenuOpen(false)}
@@ -330,6 +347,13 @@ const Nav = () => {
                     </div>
                   </div>
                   <div className="space-y-2">
+                    <NavLink
+                        to="/settings"
+                        className="block px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg"
+                        onClick={() => setIsDropdownOpen(false)}
+                    >
+                      Settings
+                    </NavLink>
                     <button
                         onClick={handleLogout}
                         className="w-full flex items-center space-x-3 px-4 py-3 text-left text-red-600 hover:bg-red-50 rounded-lg"

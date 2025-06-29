@@ -8,12 +8,104 @@ import {
   faDownload,
 } from "@fortawesome/free-solid-svg-icons";
 import PublicLayout from "../layout/PublicLayout.jsx";
+import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler } from 'chart.js';
+import { Line } from 'react-chartjs-2';
+
+ChartJS.register(
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    Title,
+    Tooltip,
+    Legend,
+    Filler
+);
+
+
 
 export default function Analytics() {
   const [filter, setFilter] = useState("Last 30 Days");
 
   const handleExport = () => {
     alert(`Exporting analytics data for ${filter}`);
+  };
+
+  // Chart data configuration
+  const chartData = {
+    labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+    datasets: [
+      {
+        label: 'Interview Score',
+        data: [65, 72, 80, 84],
+        borderColor: '#3b82f6', // blue-500
+        backgroundColor: 'rgba(59, 130, 246, 0.2)',
+        tension: 0.3,
+        fill: true,
+        pointBackgroundColor: '#3b82f6',
+        pointBorderColor: '#fff',
+        pointHoverRadius: 6,
+        pointHoverBorderWidth: 2,
+      }
+    ]
+  };
+
+  const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: 'top',
+        labels: {
+          boxWidth: 0,
+          font: {
+            size: 14
+          }
+        }
+      },
+      tooltip: {
+        backgroundColor: '#1e293b',
+        titleFont: {
+          size: 16
+        },
+        bodyFont: {
+          size: 14
+        },
+        padding: 12,
+        usePointStyle: true,
+        callbacks: {
+          label: function(context) {
+            return `${context.dataset.label}: ${context.parsed.y}%`;
+          }
+        }
+      }
+    },
+    scales: {
+      y: {
+        beginAtZero: false,
+        min: 50,
+        max: 100,
+        ticks: {
+          stepSize: 10,
+          callback: function(value) {
+            return value + '%';
+          }
+        },
+        grid: {
+          color: 'rgba(0, 0, 0, 0.05)'
+        }
+      },
+      x: {
+        grid: {
+          display: false
+        }
+      }
+    },
+    elements: {
+      line: {
+        borderWidth: 3
+      }
+    }
   };
 
   const stats = [
@@ -138,12 +230,12 @@ export default function Analytics() {
             </div>
 
             <div className="grid md:grid-cols-2 gap-8 mb-12">
-              <div className="bg-bgColor2 rounded-xl shadow-lg p-8 flex flex-col justify-center items-center h-80">
+              <div className="bg-bgColor2 rounded-xl shadow-lg p-8 h-100">
                 <h3 className="text-h5 text-subHeadingText mb-4">
                   Performance Trends
                 </h3>
-                <div className="text-subHeadingText text-h4">
-                  chart visualization
+                <div className="h-64">
+                  <Line data={chartData} options={chartOptions} />
                 </div>
               </div>
 
