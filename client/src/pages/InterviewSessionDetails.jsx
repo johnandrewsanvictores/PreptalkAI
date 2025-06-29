@@ -1,8 +1,21 @@
 import React, { useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import PublicLayout from "../layout/PublicLayout.jsx";
 
 export default function InterviewSessionDetails() {
   const [activeQuestion, setActiveQuestion] = useState(1);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const sessionData = location.state || {};
+  const sessionTitle =
+    sessionData.sessionTitle || "Technical Interview - Software Engineer";
+  const interviewType = sessionData.interviewType || "Technical Interview";
+  const sessionStatus = sessionData.sessionStatus || "88%";
+  const sessionDate = sessionData.sessionDate || "12-15-2024";
+
+  const handleBackToHistory = () => {
+    navigate("/interview-history");
+  };
 
   const questions = {
     1: "Tell me about yourself and why you're interested in this position?",
@@ -19,7 +32,10 @@ export default function InterviewSessionDetails() {
         <main className="flex-1 flex flex-col items-center py-12 px-4">
           <div className="w-full max-w-7xl">
             <div className="bg-bgColor2 shadow-lg p-8 rounded-t-xl border-b border-gray-200 flex flex-col gap-4 mb-8">
-              <button className="text-h6 text-primary cursor-pointer hover:text-primary/80 transition-colors flex items-center gap-2 font-medium w-fit">
+              <button
+                className="text-h6 text-primary cursor-pointer hover:text-primary/80 transition-colors flex items-center gap-2 font-medium w-fit"
+                onClick={handleBackToHistory}
+              >
                 &lt; Back to History
               </button>
               <h1 className="text-h2 font-semibold text-headingText">
@@ -32,6 +48,14 @@ export default function InterviewSessionDetails() {
 
             <div className="flex flex-col lg:flex-row gap-8">
               <div className="bg-bgColor2 rounded-xl shadow-lg p-8 w-full lg:w-1/3 flex flex-col gap-6 self-stretch">
+                <div className="mb-4">
+                  <h3 className="text-h5 font-semibold text-headingText mb-2">
+                    {sessionTitle}
+                  </h3>
+                  <p className="text-small text-subHeadingText">
+                    {sessionDate}
+                  </p>
+                </div>
                 <div className="flex flex-col gap-4 overflow-y-auto max-h-[500px] pr-4 flex-1">
                   {[1, 2, 3, 4, 5, 6, 7].map((q) => (
                     <div
@@ -62,7 +86,7 @@ export default function InterviewSessionDetails() {
                       Interview Type:
                     </span>
                     <span className="font-semibold text-headingText text-h6">
-                      Technical Interview
+                      {interviewType}
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
@@ -70,7 +94,7 @@ export default function InterviewSessionDetails() {
                       Overall Score:
                     </span>
                     <span className="text-green-600 font-bold text-h6">
-                      88%
+                      {sessionStatus}
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
