@@ -75,7 +75,7 @@ const SignInModal = ({ isOpen, onClose, onSwitchToSignUp }) => {
       if (data.user.isFirstVisit) {
         navigate('/decide-user-type')
       } else {
-        navigate(data.user.userType === 'freelancer' ? '/freelancer-dashboard' : '/')
+        navigate('/dashboard')
       }
 
       

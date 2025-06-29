@@ -1,11 +1,17 @@
 import { useState, useCallback } from "react";
 import logo from "../../assets/PrepTalkAIlogo.png";
+import axios from "axios";
+import api from "../../../axious.js";
+import {useNavigate} from "react-router-dom";
 
 const UploadResumeModal = ({ isOpen, onClose, onSkip, onUpload }) => {
   const [dragActive, setDragActive] = useState(false);
   const [file, setFile] = useState(null);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [formattedText, setFormattedText] = useState({});
+
+  const navigate = useNavigate();
 
   const acceptedFormats = [
     "application/pdf",
@@ -86,7 +92,12 @@ const UploadResumeModal = ({ isOpen, onClose, onSkip, onUpload }) => {
 
   const handleUpload = async () => {
     if (!file) {
-      setError("Please select a file to upload");
+      setError("Please select a file to upload.");
+      return;
+    }
+
+    if (file.type !== "application/pdf") {
+      setError("Only PDF files are allowed.");
       return;
     }
 
@@ -94,14 +105,50 @@ const UploadResumeModal = ({ isOpen, onClose, onSkip, onUpload }) => {
     setError("");
 
     try {
-      await onUpload(file);
-      resetModal();
-      onClose();
-    } catch (error) {
-      setError("Failed to upload file. Please try again.");
-    }
+      // 1. Upload to backend
+      const formData = new FormData();
+      formData.append("resume", file);
 
-    setIsLoading(false);
+      const uploadRes = await api.post("/upload-resume", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      const rawText = uploadRes.data.text;
+
+      // 2. Prepare prompt for Pollinations
+      const prompt = `
+This is parsed raw text from a resume PDF using pdfjs-dist. The content is jumbled and lacks structure. 
+Please analyze the text, extract and identify relevant resume sections (e.g., Profile, Contact Information, Education, Skills, Experience, Projects, etc.), 
+and reorganize it into a clean, categorized, and human-readable format. 
+The final output should resemble a properly formatted resume with section headers and logically grouped content.
+Send only the extracted text in valid JSON format like {"category":"sentence format"}. The category are fullName (Just a fullname, no extras), email, location, jobRole (Just a job title), softSkills, hardSkills, projects (project or experience), education, certification (certification or awards), and bio (just introduction, description or bio). Leave the category empty string if you didn't find any match on the given information. The value of category should be a sentence only, not array. convert that to sentence.
+
+Here's the raw text:
+${rawText}
+    `;
+
+      const encodedPrompt = encodeURIComponent(prompt);
+      const pollinationsURL = `https://text.pollinations.ai/${encodedPrompt}`;
+
+      // 3. Call Pollinations AI
+      const pollRes = await axios.get(pollinationsURL);
+      const formatted = pollRes.data;
+
+      // 4. Use formatted result
+      setFormattedText({formatted}); // save to state or pass somewhere
+      resetModal?.();
+      console.log(formattedText);
+      navigate("/settings", { state: { formattedText: formatted } });
+      // onClose?.();
+
+    } catch (err) {
+      console.error("Upload/Format failed:", err);
+      setError("Failed to upload and process resume. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const formatFileSize = (bytes) => {
@@ -233,7 +280,7 @@ const UploadResumeModal = ({ isOpen, onClose, onSkip, onUpload }) => {
 
           <div className="text-center space-y-1">
             <p className="text-sm text-gray-500">
-              Accepted formats: PDF, DOC, DOCX
+              Accepted format: PDF
             </p>
             <p className="text-sm text-gray-500">Maximum file size: 5mb</p>
           </div>
@@ -261,7 +308,7 @@ const UploadResumeModal = ({ isOpen, onClose, onSkip, onUpload }) => {
               disabled={!file || isLoading}
               className="flex-1 px-6 py-3 bg-blue-500 text-white rounded-full font-medium hover:bg-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-blue-200"
             >
-              {isLoading ? "Uploading..." : "Upload"}
+              {isLoading ? "Analyzing..." : "Analyze"}
             </button>
           </div>
         </div>
