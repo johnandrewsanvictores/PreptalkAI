@@ -31,7 +31,7 @@ const EntrepreneurSetupProfilepage = () => {
                             <input type="text" name="experienceRunningBuisiness" id="experienceRunningBuisiness" className="experienceRunningBuisiness bg-bgColor2 rounded-md w-full h-16" />
                         </div>
 
-                        <div className="productsServicesContainer col-span-2">
+                        <div className="productsServicesContainer">
                             <label htmlFor="userJobPosition">Products/Services: *</label><br />
                             <input type="text" name="userJobPosition" id="userJobPosition" className="userJobPosition w-full bg-bgColor2 rounded-md h-16" />
                         </div>

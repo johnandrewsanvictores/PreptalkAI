@@ -1,11 +1,11 @@
 import PublicLayout from "../layout/PublicLayout.jsx";
 
-const Homepage = () => {
+const EntrepreneurProfile = () => {
 
 
     return (
         <PublicLayout>
-            <div className="">
+          <div className="">
                 <div className="accountInformationContainer px-24">
                     <div className="mt-6 profileButtonContainer grid grid-cols-2 w-3/12">
                         <button className="h-14 w-full flex flex-row items-center bg-bgColor2 text-subHeadingText rounded-md text-p pl-8"><i class="fa-solid fa-clock-rotate-left pr-4"></i> Feedback History</button>
@@ -16,26 +16,36 @@ const Homepage = () => {
                         <h2 className="text-h2 text-headingText font-bold mt-16">Account Information</h2>
                         <div className="formContainer grid grid-cols-2 gap-14 mt-6">
                             <div className="container1">
-                                <div className="firstNameContainer mb-8">
+                                <div className="firstNameContainer mb-14">
                                     <label htmlFor="firstName">First Name: <span className="text-red">*</span></label><br />
                                     <input type="text" name="firstName" id="firstName" className="firstName bg-bgColor2 rounded-md w-full h-14" />
                                 </div>
 
-                                <div className="surnameContainer mb-8">
-                                    <label htmlFor="surName">Last Name: <span className="text-red">*</span></label><br />
+                                <div className="surnameContainer mb-14">
+                                    <label className="text-subHeadingText" htmlFor="surName">Last Name: <span className="text-red">*</span></label><br />
                                     <input type="text" name="surName" id="surName" className="surName bg-bgColor2 rounded-md w-full h-14" />
                                 </div>
 
-                                <div className="jobPositionContainer">
-                                    <label htmlFor="jobPosition">Job Position: <span className="text-red">*</span></label><br />
-                                    <input type="text" name="jobPosition" id="jobPosition" className="jobPosition bg-bgColor2 rounded-md w-full h-14" />
+                                <div className="businessTypeContainer mb-14">
+                                    <label htmlFor="businessType">Buisiness Type: <span className="text-red">*</span></label><br />
+                                    <input type="text" name="businessType" id="businessType" className="businessType bg-bgColor2 rounded-md w-full h-14" />
+                                </div>
+
+                                <div className="experienceRunningBusinessContainer mb-14">
+                                    <label htmlFor="experienceRunningBusiness">Experience Running Business: <span className="text-red">*</span></label><br />
+                                    <input type="text" name="experienceRunningBusiness" id="experienceRunningBusiness" className="experienceRunningBusiness bg-bgColor2 rounded-md w-full h-14" />
+                                </div>  
+
+                                <div className="productsServicesContainer mb-14">
+                                    <label htmlFor="productsServices">Products/Services: <span className="text-red">*</span></label><br />
+                                    <input type="text" name="productsServices" id="productsServices" className="productsServices bg-bgColor2 rounded-md w-full h-14" />
                                 </div>  
                             </div>
 
                             <div className="container2">
-                                <div className="resumeNameContainer mb-8">
-                                    <label htmlFor="resumeName">Resume Name: </label><br />
-                                    <input type="text" name="resumeName" id="resumeName" className="resumeName bg-bgColor2 rounded-md w-full h-14" />
+                                <div className="buisinessDeckContainer mb-8">
+                                    <label htmlFor="buisinessDeck">Buisiness Deck: </label><br />
+                                    <input type="text" name="buisinessDeck" id="buisinessDeck" className="buisinessDeck bg-bgColor2 rounded-md w-full h-14" />
                                 </div>
 
                                 <div className="resumeImageContainer">
@@ -78,4 +88,4 @@ const Homepage = () => {
     )
 }
 
-export default Homepage;
+export default EntrepreneurProfile;

@@ -31,7 +31,7 @@ const FreelanceSetupProfilepage = () => {
                             <input type="text" name="userSurname" id="userSurname" className="userSurname bg-bgColor2 rounded-md w-full h-14" />
                         </div>
 
-                        <div className="jobPositionContainer col-span-2">
+                        <div className="jobPositionContainer">
                             <label htmlFor="userJobPosition">Job Position: *</label><br />
                             <input type="text" name="userJobPosition" id="userJobPosition" className="userJobPosition w-full bg-bgColor2 rounded-md h-14" />
                         </div>
