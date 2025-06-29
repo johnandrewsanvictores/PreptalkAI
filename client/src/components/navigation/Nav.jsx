@@ -1,6 +1,8 @@
 "use client"
 
 import { useState } from 'react'
+import {Link, NavLink} from 'react-router-dom';
+
 import logo from "../../assets/PrepTalkAIlogo.png"
 import SignInModal from "../modals/SignInModal"
 import SignUpModal from "../modals/SignUpModal"
@@ -8,6 +10,7 @@ import { useAuth } from "../../context/AuthContext.jsx"
 import api from "../../../axious.js";
 import {showConfirmation, showSuccess} from "../../utils/alertHelper.js";
 import {useNavigate} from "react-router-dom";
+import {getNavLinkClass} from "../../utils/utils.js";
 
 const Nav = () => {
   const [isSignInModalOpen, setIsSignInModalOpen] = useState(false)
@@ -71,29 +74,29 @@ const Nav = () => {
       <>
         <nav className="bg-bgColor2 py-6 relative z-50">
           <div className="grid grid-cols-3 items-center w-full mx-auto px-8">
-            <div className="flex items-center space-x-4">
+            <Link to="/" className="flex items-center space-x-4">
               <img src={logo} alt="logo" className="h-12 w-12" />
               <span className="text-headingText font-nunito font-bold text-3xl">
               PrepTalk <span className="text-primary">AI</span>
             </span>
-            </div>
+            </Link>
 
             <div className="flex justify-center">
               <div className="flex space-x-10">
                 {
                   user ? (
                       <>
-                        <a href="#" className="text-subHeadingText hover:text-headingText transition-colors text-lg font-medium">Dashboard</a>
-                        <a href="#" className="text-subHeadingText hover:text-headingText transition-colors text-lg font-medium">Interview History</a>
-                        <a href="#" className="text-subHeadingText hover:text-headingText transition-colors text-lg font-medium">Analytics</a>
-                        <a href="#" className="text-subHeadingText hover:text-headingText transition-colors text-lg font-medium">Billing</a>
-                        <a href="#" className="text-subHeadingText hover:text-headingText transition-colors text-lg font-medium">Settings</a>
+                        <NavLink to="/dashboard" className={getNavLinkClass}>Dashboard</NavLink>
+                        <NavLink to="/interview_history" className={getNavLinkClass}>Interview History</NavLink>
+                        <NavLink to="/analytics" className={getNavLinkClass}>Analytics</NavLink>
+                        <NavLink to="/billing" className={getNavLinkClass}>Billing</NavLink>
+                        <NavLink to="/settings" className={getNavLinkClass}>Settings</NavLink>
                       </>
                   ) : (
                       <>
-                        <a href="#" className="text-subHeadingText hover:text-headingText transition-colors text-lg font-medium">Home</a>
-                        <a href="#" className="text-subHeadingText hover:text-headingText transition-colors text-lg font-medium">Start Interview</a>
-                        <a href="#" className="text-subHeadingText hover:text-headingText transition-colors text-lg font-medium">About</a>
+                        <NavLink to="/" className={getNavLinkClass}>Home</NavLink>
+                        <NavLink to="/start_interview" className={getNavLinkClass}>Start Interview</NavLink>
+                        <NavLink to="/about" className={getNavLinkClass}>About</NavLink>
                       </>
                   )
                 }
