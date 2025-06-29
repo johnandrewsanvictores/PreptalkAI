@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import logo from "../../assets/PrepTalkAIlogo.png"
+import api from "../../../axious.js";
 
 const SignUpModal = ({ isOpen, onClose, onSwitchToSignIn }) => {
   const navigate = useNavigate()
@@ -82,47 +83,38 @@ const SignUpModal = ({ isOpen, onClose, onSwitchToSignIn }) => {
     try {
       // Database API call to your registration endpoint
 
+      const res = await api.post('/auth/signup', {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        username: formData.username,
+        email: formData.email,
+        password: formData.password
+      });
 
-      const response = await fetch('/api/auth/signup', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          firstName: formData.firstName,
-          lastName: formData.lastName,
-          username: formData.username,
-          email: formData.email,
-          password: formData.password
-        })
-      })
+      const data = res.data
 
-      const data = await response.json()
+      localStorage.setItem('user', JSON.stringify({
+        id: data.user.id,
+        firstName: data.user.firstName,
+        lastName: data.user.lastName,
+        username: data.user.username,
+        email: data.user.email,
+        isLoggedIn: true,
+        isFirstVisit: true, // New users always go to user type selection
+      }))
 
-      if (response.ok) {
-        // Store new user data from database response
-        localStorage.setItem('user', JSON.stringify({
-          id: data.user.id,
-          firstName: data.user.firstName,
-          lastName: data.user.lastName,
-          username: data.user.username,
-          email: data.user.email,
-          isLoggedIn: true,
-          isFirstVisit: true, // New users always go to user type selection
-          token: data.token
-        }))
-        
-        // Close modal and navigate to user type selection for new users
-        resetForm()
-        onClose()
-        navigate('/decide-user-type')
-      } else {
-        setError(data.message || 'Registration failed. Please try again.')
-      }
+      // Close modal and navigate to user type selection for new users
+      resetForm()
+      onClose()
+      navigate('/decide-user-type')
       
     } catch (error) {
-      console.error('Registration error:', error)
-      setError('An error occurred during registration. Please try again.')
+      if (error.response && error.response.status === 400) {
+
+        setError(error.response.data.error || ' Make sure all fields are valid');
+      } else {
+        setError('An error occurred during registration. Please try again.');
+      }
     }
     
     setIsLoading(false)
@@ -173,7 +165,7 @@ const SignUpModal = ({ isOpen, onClose, onSwitchToSignIn }) => {
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {error && (
-            <div className="bg-red-50 border border-red-200 rounded-lg p-3 text-red-700 text-sm">
+            <div className="bg-red-50 border border-red rounded-lg p-3 text-red-700 text-sm text-red">
               {error}
             </div>
           )}
@@ -236,7 +228,7 @@ const SignUpModal = ({ isOpen, onClose, onSwitchToSignIn }) => {
               name="email"
               value={formData.email}
               onChange={handleInputChange}
-              placeholder="Type your password"
+              placeholder="Type your email"
               className="w-full px-4 py-3 border-b-2 border-gray-300 focus:border-blue-500 outline-none bg-transparent"
               required
               disabled={isLoading}
@@ -257,7 +249,7 @@ const SignUpModal = ({ isOpen, onClose, onSwitchToSignIn }) => {
                   placeholder="Type your username"
                   className="w-full px-4 py-3 pr-10 border-b-2 border-gray-300 focus:border-blue-500 outline-none bg-transparent"
                   required
-                  minLength="6"
+                  minLength="8"
                   disabled={isLoading}
                 />
                 <button
@@ -320,7 +312,7 @@ const SignUpModal = ({ isOpen, onClose, onSwitchToSignIn }) => {
             disabled={isLoading}
             className="w-full bg-blue-500 text-white py-3 rounded-full text-lg font-semibold hover:bg-blue-600 transition-colors mt-8 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {isLoading ? 'Creating Account...' : 'Sign in'}
+            {isLoading ? 'Creating Account...' : 'Sign up'}
           </button>
 
           <div className="relative my-6">

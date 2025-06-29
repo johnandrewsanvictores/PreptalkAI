@@ -75,7 +75,7 @@ export const google_callback = (req, res, next) => {
             });
 
 
-            res.redirect(`${process.env.FRONTEND_BASE_URL}/google-success?token=${token}`);
+            res.redirect(`${process.env.FRONTEND_BASE_URL}/google-success`);
         });
     })(req, res, next);
 }
@@ -134,24 +134,32 @@ export const createUser = async (req, res) => {
 
         if (users) {
             if (users.email === email) {
-                return res.status(409).json({ msg: "Email already exists" });
+                return res.status(409).json({ error: "Email already exists" });
             }
             if (users.username === username) {
-                return res.status(409).json({ msg: "Username already exists" });
+                return res.status(409).json({ error: "Username already exists" });
             }
         }
 
         const user = await User.create({firstName, lastName,email, password: hashedPassword, username});
         const token = createToken(user._id);
+        res.cookie('token', token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production', // only on HTTPS in production
+            sameSite: 'Strict',
+            maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+        });
 
-        res.status(201).json({token,
+        res.status(201).json({
             user: {
             userId : user._id,
             firstName: user.firstName,
             lastName: user.lastName,
             email: user.email,
             username: user.username
-            }
+            },
+            success: "true",
+            message: "User created successfully"
         });
     } catch(error) {
         res.status(500).json({ message: 'Server error', error: err.message });
@@ -182,7 +190,7 @@ export const signIn = async (req, res) => {
         });
 
         // 4. Send token and user info (without password)
-        res.status(200).json({token,
+        res.status(200).json({
             user: {
                 userId : user._id,
                 firstName: user.firstName,
@@ -215,7 +223,7 @@ export const validateUserInfo = [
         if (!errors.isEmpty()) {
             return res.status(400).json({
                 status: 'error',
-                msg: errors.array()[0].msg,
+                error: errors.array()[0].msg,
             });
         }
         next();

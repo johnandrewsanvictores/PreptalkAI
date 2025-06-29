@@ -11,7 +11,7 @@ const FreelanceSetupProfilepage = () => {
 
                 <div className="resumeButtonContainer mt-10 flex flex-col justify-center items-center">
                     <p className="text-subHeadingText font-bold">Do you have a resume?</p>
-                    <button className="bg-[#4F5D75] text-white p-4 px-10 text-h5 rounded-3xl mt-3">Upload Resume <i class="pl-2 fa-solid fa-arrow-up-from-bracket"></i></button>
+                    <button className="bg-[#4F5D75] text-white p-4 px-10 text-h5 rounded-3xl mt-3">Upload Resume <i className="pl-2 fa-solid fa-arrow-up-from-bracket"></i></button>
                 </div>
 
                 <hr className="w-[60%] mt-12 mb-12 border-black" />
