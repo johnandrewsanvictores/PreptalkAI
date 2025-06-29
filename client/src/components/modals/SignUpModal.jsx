@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import logo from "../../assets/PrepTalkAIlogo.png"
 import api from "../../../axious.js";
+import {useAuth} from "../../context/AuthContext.jsx";
 
 const SignUpModal = ({ isOpen, onClose, onSwitchToSignIn }) => {
   const navigate = useNavigate()
@@ -18,6 +19,7 @@ const SignUpModal = ({ isOpen, onClose, onSwitchToSignIn }) => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const {setUser} = useAuth();
 
   // Reset form when modal closes
   const resetForm = () => {
@@ -92,16 +94,7 @@ const SignUpModal = ({ isOpen, onClose, onSwitchToSignIn }) => {
       });
 
       const data = res.data
-
-      localStorage.setItem('user', JSON.stringify({
-        id: data.user.id,
-        firstName: data.user.firstName,
-        lastName: data.user.lastName,
-        username: data.user.username,
-        email: data.user.email,
-        isLoggedIn: true,
-        isFirstVisit: true, // New users always go to user type selection
-      }))
+      setUser(data.user);
 
       // Close modal and navigate to user type selection for new users
       resetForm()

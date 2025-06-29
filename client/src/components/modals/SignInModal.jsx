@@ -67,18 +67,7 @@ const SignInModal = ({ isOpen, onClose, onSwitchToSignUp }) => {
       const data = res.data;
 
       setUser(data.user);
-      console.log(user);
-      // Store user data from database response
-      localStorage.setItem('user', JSON.stringify({
-        id: data.user.id,
-        username: data.user.username,
-        email: data.user.email,
-        firstName: data.user.firstName,
-        lastName: data.user.lastName,
-        userType: data.user.userType, // 'freelancer' or 'micro-entrepreneur'
-        isLoggedIn: true,
-        isFirstVisit: data.user.isFirstVisit,
-      }))
+      console.log(data.user);
 
       // Close modal and navigate based on user status
       resetForm()
@@ -86,7 +75,6 @@ const SignInModal = ({ isOpen, onClose, onSwitchToSignUp }) => {
       if (data.user.isFirstVisit) {
         navigate('/decide-user-type')
       } else {
-        // Navigate to user's dashboard based on their type
         navigate(data.user.userType === 'freelancer' ? '/freelancer-dashboard' : '/')
       }
 
