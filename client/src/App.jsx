@@ -9,6 +9,7 @@ import CameraSetup from "./pages/CameraSetup.jsx";
 import InterviewHistory from "./pages/InterviewHistory.jsx";
 import InterviewSessionDetails from "./pages/InterviewSessionDetails.jsx";
 import Analytics from "./pages/Analytics.jsx";
+import Aboutpage from "./pages/Aboutpage.jsx";
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
         <Route path="/interview-history" element={<InterviewHistory />} />
         <Route path="/interview-session-details" element={<InterviewSessionDetails />} />
         <Route path="/analytics" element={<Analytics />} />
+        <Route path="/about" element={<Aboutpage />} />
       </Routes>
     </>
   )
