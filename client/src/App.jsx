@@ -5,7 +5,7 @@ import FreelanceSetupProfilepage from "./pages/FreelanceSetupProfilepage.jsx";
 import EntrepreneurSetupProfilepage from "./pages/EntrepreneurSetupProfilepage.jsx";
 import FreelancerProfile from "./pages/FreelancerProfle.jsx";
 import EntrepreneurProfile from "./pages/EntrepreneurProfile.jsx";
-import PitchPractice from "./pages/PitchPractice.jsx";  
+import Dashboard from "./pages/Dashboard.jsx";  
 
 function App() {
   return (
@@ -16,7 +16,7 @@ function App() {
         <Route path="/entrepreneur-setup-profile" element={<EntrepreneurSetupProfilepage />} />
         <Route path="/freelancer-profile" element={<FreelancerProfile />} />
         <Route path="/entrepreneur-profile" element={<EntrepreneurProfile />} />
-        <Route path="/pitch-practice" element={<PitchPractice />} />
+        <Route path="/dashboard" element={<Dashboard />} />
       </Routes>
     </>
   )
