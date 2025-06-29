@@ -111,7 +111,7 @@ const Nav = () => {
                   user ? (
                       <>
                         <NavLink to="/dashboard" className={getNavLinkClass}>Dashboard</NavLink>
-                        <NavLink to="/interview_history" className={getNavLinkClass}>Interview History</NavLink>
+                        <NavLink to="/interview-history" className={getNavLinkClass}>Interview History</NavLink>
                         <NavLink to="/analytics" className={getNavLinkClass}>Analytics</NavLink>
                         <NavLink to="/billing" className={getNavLinkClass}>Billing</NavLink>
                         <NavLink to="/settings" className={getNavLinkClass}>Settings</NavLink>

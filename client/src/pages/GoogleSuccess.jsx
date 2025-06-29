@@ -23,7 +23,7 @@ const GoogleSuccess = () => {
                 if (data.user.isFirstVisit) {
                     navigate('/decide-user-type');
                 } else {
-                    navigate(data.user.userType === 'freelancer' ? '/freelancer-dashboard' : '/entrepreneur-dashboard');
+                    navigate('/dashboard');
                 }
             } catch (err) {
                 alert('Failed to verify session. Please log in again.');

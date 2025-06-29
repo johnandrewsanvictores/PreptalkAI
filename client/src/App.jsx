@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import {Routes, Route, Outlet, Navigate} from "react-router-dom";
 
 import Homepage from "./pages/Homepage.jsx";
 import FreelanceSetupProfilepage from "./pages/FreelanceSetupProfilepage.jsx";
@@ -13,24 +13,39 @@ import CameraSetup from "./pages/CameraSetup.jsx";
 import InterviewHistory from "./pages/InterviewHistory.jsx";
 import InterviewSessionDetails from "./pages/InterviewSessionDetails.jsx";
 import Analytics from "./pages/Analytics.jsx";
+import {useAuth} from "./context/AuthContext.jsx";
 
 function App() {
+  const PrivateRoute = () => {
+    const { user, loading } = useAuth();
+
+    if (loading) return <p>Loading...</p>;
+
+    return user ? <Outlet /> : <Navigate to="/" />;
+  };
+
+
+
+
   return (
     <>
       <Routes>
         <Route path="/" element={<Homepage />} />
-        <Route path="/freelancer-setup-profile" element={<FreelanceSetupProfilepage />} />
-        <Route path="/entrepreneur-setup-profile" element={<EntrepreneurSetupProfilepage />} />
-        <Route path="/freelancer-profile" element={<FreelancerProfile />} />
-        <Route path="/entrepreneur-profile" element={<EntrepreneurProfile />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/decide-user-type" element={<DecideTypeofUserPage />} />
-        <Route path="/google-success" element={<GoogleSuccess />} />
-        <Route path="/interview-settings" element={<InterviewSettings />} />
-        <Route path="/camera-setup" element={<CameraSetup />} />
-        <Route path="/interview-history" element={<InterviewHistory />} />
-        <Route path="/interview-session-details" element={<InterviewSessionDetails />} />
-        <Route path="/analytics" element={<Analytics />} />
+
+        <Route element={<PrivateRoute />}>
+          <Route path="/freelancer-setup-profile" element={<FreelanceSetupProfilepage />} />
+          <Route path="/entrepreneur-setup-profile" element={<EntrepreneurSetupProfilepage />} />
+          <Route path="/freelancer-profile" element={<FreelancerProfile />} />
+          <Route path="/entrepreneur-profile" element={<EntrepreneurProfile />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/decide-user-type" element={<DecideTypeofUserPage />} />
+          <Route path="/google-success" element={<GoogleSuccess />} />
+          <Route path="/interview-settings" element={<InterviewSettings />} />
+          <Route path="/camera-setup" element={<CameraSetup />} />
+          <Route path="/interview-history" element={<InterviewHistory />} />
+          <Route path="/interview-session-details" element={<InterviewSessionDetails />} />
+          <Route path="/analytics" element={<Analytics />} />
+        </Route>
       </Routes>
     </>
   )
