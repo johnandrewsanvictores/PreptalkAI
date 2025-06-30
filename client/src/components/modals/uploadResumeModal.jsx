@@ -105,7 +105,6 @@ const UploadResumeModal = ({ isOpen, onClose, onSkip, onUpload }) => {
     setError("");
 
     try {
-      // 1. Upload to backend
       const formData = new FormData();
       formData.append("resume", file);
 
@@ -118,7 +117,6 @@ const UploadResumeModal = ({ isOpen, onClose, onSkip, onUpload }) => {
 
       const rawText = uploadRes.data.text;
 
-      // 2. Prepare prompt for Pollinations
       const prompt = `
 This is parsed raw text from a resume PDF using pdfjs-dist. The content is jumbled and lacks structure. 
 Please analyze the text, extract and identify relevant resume sections (e.g., Profile, Contact Information, Education, Skills, Experience, Projects, etc.), 
@@ -133,16 +131,14 @@ ${rawText}
       const encodedPrompt = encodeURIComponent(prompt);
       const pollinationsURL = `https://text.pollinations.ai/${encodedPrompt}`;
 
-      // 3. Call Pollinations AI
       const pollRes = await axios.get(pollinationsURL);
       const formatted = pollRes.data;
 
-      // 4. Use formatted result
-      setFormattedText({ formatted }); // save to state or pass somewhere
+      setFormattedText({ formatted });
       resetModal?.();
       console.log(formattedText);
       navigate("/settings", { state: { formattedText: formatted } });
-      // onClose?.();
+
     } catch (err) {
       console.error("Upload/Format failed:", err);
       setError("Failed to upload and process resume. Please try again.");
