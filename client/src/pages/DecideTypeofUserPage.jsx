@@ -19,11 +19,15 @@ const DecideTypeofUserPage = () => {
 
     if (isConfirmed) {
       console.log("Hi");
-      const response = await api.put("/auth/updateUser", {
-        _id: user.userId,
-        isFirstVisit: false,
-        userType: "freelancer",
-      });
+      const response = await api.put(
+        "/auth/updateUser",
+        {
+          _id: user.userId,
+          isFirstVisit: false,
+          userType: "freelancer",
+        },
+        { withCredentials: true }
+      );
 
       if (response.status === 200) {
         setUser({ ...user, isFirstVisit: false, userType: "freelancer" });
@@ -44,11 +48,15 @@ const DecideTypeofUserPage = () => {
 
     if (isConfirmed) {
       console.log("Hi");
-      const response = await api.put("/auth/updateUser", {
-        _id: user.userId,
-        isFirstVisit: false,
-        userType: "entrep",
-      });
+      const response = await api.put(
+        "/auth/updateUser",
+        {
+          _id: user.userId,
+          isFirstVisit: false,
+          userType: "entrep",
+        },
+        { withCredentials: true }
+      );
 
       if (response.status === 200) {
         setUser({ ...user, isFirstVisit: false, userType: "entrep" });
