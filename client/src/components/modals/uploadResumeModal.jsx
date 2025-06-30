@@ -112,6 +112,7 @@ const UploadResumeModal = ({ isOpen, onClose, onSkip, onUpload }) => {
         headers: {
           "Content-Type": "multipart/form-data",
         },
+        withCredentials: true,
       });
 
       const rawText = uploadRes.data.text;
@@ -137,6 +138,7 @@ ${rawText}
       resetModal?.();
       console.log(formattedText);
       navigate("/settings", { state: { formattedText: formatted } });
+
     } catch (err) {
       console.error("Upload/Format failed:", err);
       setError("Failed to upload and process resume. Please try again.");

@@ -18,7 +18,8 @@ function generateUsername(givenName) {
 passport.use(new GoogleStrategy({
             clientID: process.env.GOOGLE_CLIENT_ID,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-            callbackURL: "/auth/google/callback"
+            callbackURL: process.env.GOOGLE_REDIRECT_URI,
+            proxy: true
         },
         async (accessToken, refreshToken, profile, done) => {
 
@@ -79,6 +80,7 @@ export const google_callback = (req, res, next) => {
                 httpOnly: true,
                 secure: process.env.NODE_ENV === 'production',
                 sameSite: process.env.NODE_ENV === 'production' ? 'None' : false,
+                domain: process.env.COOKIE_DOMAIN,
                 maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
             });
 
@@ -102,7 +104,7 @@ export const logout = (req, res, next) => {
         res.clearCookie('token', {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
-            sameSite: 'Strict',
+            sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
         });
 
         req.session.destroy(err => {
@@ -154,7 +156,7 @@ export const createUser = async (req, res) => {
         res.cookie('token', token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production', // only on HTTPS in production
-            sameSite: 'Strict',
+            sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
             maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
         });
 
@@ -193,7 +195,7 @@ export const signIn = async (req, res) => {
         res.cookie('token', token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production', // only on HTTPS in production
-            sameSite: 'Strict',
+            sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
             maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
         });
 
