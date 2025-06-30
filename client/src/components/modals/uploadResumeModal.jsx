@@ -2,7 +2,7 @@ import { useState, useCallback } from "react";
 import logo from "../../assets/PrepTalkAIlogo.png";
 import axios from "axios";
 import api from "../../../axious.js";
-import {useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const UploadResumeModal = ({ isOpen, onClose, onSkip, onUpload }) => {
   const [dragActive, setDragActive] = useState(false);
@@ -113,6 +113,7 @@ const UploadResumeModal = ({ isOpen, onClose, onSkip, onUpload }) => {
         headers: {
           "Content-Type": "multipart/form-data",
         },
+        withCredentials: true,
       });
 
       const rawText = uploadRes.data.text;
@@ -137,12 +138,11 @@ ${rawText}
       const formatted = pollRes.data;
 
       // 4. Use formatted result
-      setFormattedText({formatted}); // save to state or pass somewhere
+      setFormattedText({ formatted }); // save to state or pass somewhere
       resetModal?.();
       console.log(formattedText);
       navigate("/settings", { state: { formattedText: formatted } });
       // onClose?.();
-
     } catch (err) {
       console.error("Upload/Format failed:", err);
       setError("Failed to upload and process resume. Please try again.");
@@ -279,9 +279,7 @@ ${rawText}
           </div>
 
           <div className="text-center space-y-1">
-            <p className="text-sm text-gray-500">
-              Accepted format: PDF
-            </p>
+            <p className="text-sm text-gray-500">Accepted format: PDF</p>
             <p className="text-sm text-gray-500">Maximum file size: 5mb</p>
           </div>
 

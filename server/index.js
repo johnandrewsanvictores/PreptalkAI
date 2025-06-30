@@ -26,7 +26,9 @@ app.use(cookieParser());
 
 app.use(cors({
     origin: process.env.FRONTEND_BASE_URL,
-    credentials: true // Allow session cookies from frontend
+    credentials: true,
+    allowedHeaders: ['Content-Type', 'Authorization', 'Set-Cookie'],
+    exposedHeaders: ['Set-Cookie']
 }));
 
 // Session configuration
