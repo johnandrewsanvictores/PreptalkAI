@@ -67,20 +67,24 @@ export const google_authenticate = passport.authenticate('google', {
     prompt: 'select_account'
 });
 
+//user
+const createToken = (userId) => {
+    return jwt.sign({ userId },  process.env.JWT_SECRET, { expiresIn: '7d'});
+}
+
 export const google_callback = (req, res, next) => {
     passport.authenticate('google', (err, user, info) => {
         if (err)  return next(err);
 
         req.logIn(user, (err) => {
             if (err) return next(err);
-            const token = jwt.sign({ userId: req.user._id }, process.env.JWT_SECRET, {
-                expiresIn: '7d',
-            });
+
+            const token = createToken(req.user._id);
 
             res.cookie('token', token, {
                 httpOnly: true,
                 secure: process.env.NODE_ENV === 'production',
-                sameSite: process.env.NODE_ENV === 'production' ? 'None' : false,
+                sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
                 domain: process.env.COOKIE_DOMAIN,
                 maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
             });
@@ -124,11 +128,6 @@ export const logout = (req, res, next) => {
     });
 };
 
-
-//user
-const createToken = (userId) => {
-    return jwt.sign({ userId },  process.env.JWT_SECRET, { expiresIn: '7d'});
-}
 
 export const createUser = async (req, res) => {
     try {
