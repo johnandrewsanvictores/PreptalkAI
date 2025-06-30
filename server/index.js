@@ -25,10 +25,13 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use(cors({
-    origin: process.env.FRONTEND_BASE_URL,
+    origin: [
+        process.env.FRONTEND_BASE_URL,
+        'https://accounts.google.com'
+    ],
     credentials: true,
-    allowedHeaders: ['Content-Type', 'Authorization', 'Set-Cookie'],
-    exposedHeaders: ['Set-Cookie']
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
 }));
 
 // Session configuration
@@ -40,6 +43,7 @@ app.use(session({
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
+        domain: process.env.COOKIE_DOMAIN,
         maxAge: 1000 * 60 * 60 // 1 hour
     }
 }));
