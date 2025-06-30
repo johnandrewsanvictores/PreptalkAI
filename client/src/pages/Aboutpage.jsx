@@ -6,7 +6,8 @@ const Aboutpage = () => {
       <section className="py-24 px-4 bg-bgColor">
         <div className="max-w-5xl mx-auto text-center">
           <h1 className="text-h1 font-bold text-headingText mb-8">
-            What is <span className="text-primary">Preptalk AI</span>?
+            What is <span className="text-subHeadingText">Preptalk</span>{" "}
+            <span className="text-primary">AI</span>?
           </h1>
           <p className="text-h6 text-subHeadingText leading-relaxed max-w-4xl mx-auto">
             Preptalk AI is an AI-powered platform built to help Filipino
@@ -104,9 +105,7 @@ const Aboutpage = () => {
       <section className="py-24 px-4 bg-bgColor">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-h2 font-bold text-primary mb-6">
-              How it works
-            </h2>
+            <h2 className="text-h2 font-bold text-primary mb-6">Who We Help</h2>
             <p className="text-h6 text-subHeadingText max-w-3xl mx-auto">
               Preptalk AI is built for freelancers and micro-entrepreneurs who
               have the skills, passion, and drive— but struggle to communicate
