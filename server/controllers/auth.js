@@ -79,6 +79,8 @@ export const google_callback = (req, res, next) => {
         req.logIn(user, (err) => {
             if (err) return next(err);
 
+            console.log(req.user)
+
             const token = createToken(req.user._id);
 
             res.cookie('token', token, {
