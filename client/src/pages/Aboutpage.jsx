@@ -6,8 +6,25 @@ const Aboutpage = () => {
       <section className="py-24 px-4 bg-bgColor">
         <div className="max-w-5xl mx-auto text-center">
           <h1 className="text-h1 font-bold text-headingText mb-8">
-            What is <span className="text-subHeadingText">Preptalk</span>{" "}
-            <span className="text-primary">AI</span>?
+            What is{" "}
+            <div className="relative inline-block">
+              <span className="text-subHeadingText">PrepTalk</span>{" "}
+              <span className="text-primary">AI</span>
+              <svg
+                className="absolute left-0 bottom-[-20px] w-full"
+                viewBox="0 0 200 20"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M5 15 C50 5, 150 5, 195 15"
+                  stroke="#3B82F6"
+                  strokeWidth="3"
+                  fill="none"
+                />
+              </svg>
+            </div>
+            ?
           </h1>
           <p className="text-h6 text-subHeadingText leading-relaxed max-w-4xl mx-auto">
             Preptalk AI is an AI-powered platform built to help Filipino
