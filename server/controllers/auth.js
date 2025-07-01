@@ -18,7 +18,8 @@ function generateUsername(givenName) {
 passport.use(new GoogleStrategy({
             clientID: process.env.GOOGLE_CLIENT_ID,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-            callbackURL: "/auth/google/callback"
+            callbackURL: process.env.GOOGLE_REDIRECT_URI,
+            proxy: true
         },
         async (accessToken, refreshToken, profile, done) => {
 
@@ -26,6 +27,7 @@ passport.use(new GoogleStrategy({
                 let user = await User.findOne({googleId: profile.id});
                 console.log(user)
                 console.log(profile);
+                console.log(process.env.NODE_ENV);
 
                 if(!user) {
                     user = await User.create({
@@ -47,7 +49,7 @@ passport.use(new GoogleStrategy({
 );
 
 passport.serializeUser((user, done) => {
-    done(null, user.id);
+    done(null, user._id);
 });
 
 passport.deserializeUser(async (id, done) => {
@@ -65,20 +67,27 @@ export const google_authenticate = passport.authenticate('google', {
     prompt: 'select_account'
 });
 
+//user
+const createToken = (userId) => {
+    return jwt.sign({ userId },  process.env.JWT_SECRET, { expiresIn: '7d'});
+}
+
 export const google_callback = (req, res, next) => {
     passport.authenticate('google', (err, user, info) => {
         if (err)  return next(err);
 
         req.logIn(user, (err) => {
             if (err) return next(err);
-            const token = jwt.sign({ userId: req.user._id }, process.env.JWT_SECRET, {
-                expiresIn: '7d',
-            });
+
+            console.log(req.user)
+
+            const token = createToken(req.user._id);
 
             res.cookie('token', token, {
                 httpOnly: true,
                 secure: process.env.NODE_ENV === 'production',
-                sameSite: process.env.NODE_ENV === 'production' ? 'None' : false,
+                sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
+                domain: process.env.COOKIE_DOMAIN,
                 maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
             });
 
@@ -102,7 +111,7 @@ export const logout = (req, res, next) => {
         res.clearCookie('token', {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
-            sameSite: 'Strict',
+            sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
         });
 
         req.session.destroy(err => {
@@ -121,11 +130,6 @@ export const logout = (req, res, next) => {
     });
 };
 
-
-//user
-const createToken = (userId) => {
-    return jwt.sign({ userId },  process.env.JWT_SECRET, { expiresIn: '7d'});
-}
 
 export const createUser = async (req, res) => {
     try {
@@ -154,7 +158,7 @@ export const createUser = async (req, res) => {
         res.cookie('token', token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production', // only on HTTPS in production
-            sameSite: 'Strict',
+            sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
             maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
         });
 
@@ -193,7 +197,7 @@ export const signIn = async (req, res) => {
         res.cookie('token', token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production', // only on HTTPS in production
-            sameSite: 'Strict',
+            sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
             maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
         });
 

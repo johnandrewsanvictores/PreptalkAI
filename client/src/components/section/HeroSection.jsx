@@ -14,8 +14,8 @@ const HeroSection = () => {
     if (user) {
       navigate("/interview-settings");
     } else {
-      setIsSignInModalOpen(false);
-      setIsSignUpModalOpen(true);
+      setIsSignInModalOpen(true);
+      setIsSignUpModalOpen(false);
     }
   };
 

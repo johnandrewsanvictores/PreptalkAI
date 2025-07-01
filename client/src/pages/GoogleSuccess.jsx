@@ -12,7 +12,13 @@ const GoogleSuccess = () => {
         const fetchUserProfile = async () => {
             try {
                 // Automatically sends the cookie if `withCredentials: true` is set in your axios instance
-                const res = await api.get('/auth/user/profile');
+                try {
+                    const res = await api.get('/auth/user/profile');
+                    console.log("✅ Got user profile:", res.data);
+
+                } catch (err) {
+                    console.error("❌ Failed to fetch profile:", err);
+                }
 
                 const data = res.data;
 
