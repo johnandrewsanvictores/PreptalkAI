@@ -1,4 +1,15 @@
 import { useState } from "react";
+import {
+  Upload,
+  Bot,
+  Settings,
+  Mic,
+  BarChart2,
+  Star,
+  CreditCard,
+  ChevronDown,
+  ChevronUp,
+} from "lucide-react";
 
 const KeyFeatureAndBenefitsSection = () => {
   const [expandedItems, setExpandedItems] = useState({});
@@ -12,101 +23,127 @@ const KeyFeatureAndBenefitsSection = () => {
 
   const features = [
     {
-      title: "AI-Powered Mock Interviews",
+      icon: Upload,
+      title: "Smart Resume Upload",
+      summary:
+        "Upload your resume and get AI-powered analysis and suggestions.",
       description:
-        "Get AI-powered mock interviews tailored to your job role. Practice, get instant feedback, and boost your confidence — all in one place.",
+        "Our advanced AI analyzes your resume to identify strengths, weaknesses, and areas for improvement. Get personalized recommendations to optimize your resume for specific job roles and increase your chances of landing interviews.",
     },
     {
-      title: "Real-Time Feedback",
+      icon: Bot,
+      title: "AI Agent Selection",
+      summary:
+        "Choose from specialized AI interviewers for different industries.",
       description:
-        "Receive immediate, detailed feedback on your responses, body language, and communication skills to improve your interview performance.",
+        "Select from a diverse range of AI interviewers, each trained for specific industries and job roles. Whether you're applying for tech, finance, healthcare, or marketing positions, our AI agents provide relevant and challenging interview experiences.",
     },
     {
-      title: "Industry-Specific Questions",
+      icon: Settings,
+      title: "Custom Interview Settings",
+      summary:
+        "Personalize your interview experience with custom configurations.",
       description:
-        "Access a comprehensive database of questions tailored to your specific industry and job role for targeted practice.",
+        "Tailor your mock interviews by setting difficulty levels, interview duration, question types, and focus areas. Create practice sessions that match your specific needs and target job requirements for maximum preparation effectiveness.",
     },
     {
+      icon: Mic,
+      title: "Interactive Mock Interviews",
+      summary: "Practice with real-time voice and video mock interviews.",
+      description:
+        "Engage in realistic mock interviews with voice recognition and video analysis. Our AI provides real-time feedback on your verbal responses, body language, eye contact, and overall presentation to help you perform your best.",
+    },
+    {
+      icon: BarChart2,
       title: "Performance Analytics",
+      summary: "Track your progress with detailed analytics and insights.",
       description:
-        "Track your progress over time with detailed analytics and insights to identify areas for improvement.",
+        "Monitor your improvement over time with comprehensive analytics dashboard. View detailed metrics on response quality, confidence levels, speaking pace, and areas of strength. Identify patterns and focus on specific skills that need development.",
     },
     {
-      title: "Flexible Scheduling",
+      icon: Star,
+      title: "AI Recommendations",
+      summary: "Get personalized suggestions to improve your interview skills.",
       description:
-        "Practice anytime, anywhere with our 24/7 available AI interviewer that fits your schedule and learning pace.",
+        "Receive tailored recommendations based on your performance history and target roles. Our AI suggests specific areas to focus on, practice questions, and resources to help you continuously improve your interview success rate.",
+    },
+    {
+      icon: CreditCard,
+      title: "Flexible Pricing",
+      summary: "Start free and upgrade as you grow your career.",
+      description:
+        "Begin with our generous free tier that includes basic mock interviews and feedback. Upgrade to premium plans for advanced features like industry-specific scenarios, detailed analytics, and unlimited practice sessions.",
     },
   ];
 
   return (
-    <section className="py-16 px-4 bg-white">
+    <section className="py-16 px-4 bg-bgColor2 transition-colors duration-300">
       <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
-          <div>
-            <h2 className="text-h2 font-bold text-primary mb-6">
-              Key Features and Benefits
-            </h2>
-            <p className="text-p text-subHeadingText leading-relaxed mb-20">
-              Get AI-powered mock interviews tailored to your job role.
-              Practice, get instant feedback, and boost your confidence — all in
-              one place.
-            </p>
-            <img
-              src="https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExNGM0aHl2dWJsOG1wMGJxbWZ5bnl6MmtqcTMwNWo4d3Y1eGQ0bmg0aiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/Hrm0LJNRkPHDkLIHz9/giphy.gif"
-              className="w-full h-full object-cover border-2 border-gray-300 rounded-lg"
-            />
-          </div>
+        <div className="text-center mb-16">
+          <h2 className="text-h2 font-bold text-primary mb-6">
+            Key Features and Benefits
+          </h2>
+          <p className="text-p text-subHeadingText leading-relaxed max-w-3xl mx-auto">
+            Discover powerful AI-driven tools designed to transform your
+            interview preparation and boost your confidence for any job
+            opportunity.
+          </p>
+        </div>
 
-          <div className="space-y-4">
-            {features.map((feature, index) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
+          {features.map((feature, index) => {
+            const IconComponent = feature.icon;
+            const isExpanded = expandedItems[index];
+
+            return (
               <div
                 key={index}
-                className="bg-gray-50 rounded-lg overflow-hidden"
+                className="bg-white rounded-xl shadow-md hover:shadow-lg hover:scale-105 transition-all duration-300 p-6 border border-gray-200"
               >
-                <button
-                  onClick={() => toggleItem(index)}
-                  className="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-gray-100 transition-colors"
-                >
-                  <div>
-                    <h3 className="text-h4 font-semibold text-headingText">
+                <div className="flex items-start gap-4 mb-4">
+                  <div className="flex-shrink-0 w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                    <IconComponent className="w-6 h-6 text-primary" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-h5 font-bold text-headingText mb-2">
                       {feature.title}
                     </h3>
-                    {!expandedItems[index] && (
-                      <p className="text-sm text-subHeadingText mt-1 line-clamp-1">
-                        {feature.description.substring(0, 60)}...
-                      </p>
-                    )}
+                    <p className="text-small text-subHeadingText leading-relaxed">
+                      {feature.summary}
+                    </p>
                   </div>
-                  <svg
-                    className={`w-5 h-5 text-gray-500 transition-transform ${
-                      expandedItems[index] ? "rotate-180" : ""
-                    }`}
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M19 9l-7 7-7-7"
-                    />
-                  </svg>
-                </button>
+                </div>
 
-                {expandedItems[index] && (
-                  <div className="px-6 pb-4">
+                <div
+                  className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                    isExpanded ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+                  }`}
+                >
+                  <div className="pt-4 border-t border-gray-200">
                     <p className="text-p text-subHeadingText leading-relaxed">
                       {feature.description}
                     </p>
                   </div>
-                )}
+                </div>
+
+                <button
+                  onClick={() => toggleItem(index)}
+                  className="mt-4 flex items-center gap-2 text-primary hover:text-primary/80 transition-colors duration-200 font-medium text-small group"
+                >
+                  <span>{isExpanded ? "See Less" : "See More"}</span>
+                  {isExpanded ? (
+                    <ChevronUp className="w-4 h-4 group-hover:-translate-y-0.5 transition-transform duration-200" />
+                  ) : (
+                    <ChevronDown className="w-4 h-4 group-hover:translate-y-0.5 transition-transform duration-200" />
+                  )}
+                </button>
               </div>
-            ))}
-          </div>
+            );
+          })}
         </div>
       </div>
     </section>
   );
 };
+
 export default KeyFeatureAndBenefitsSection;
