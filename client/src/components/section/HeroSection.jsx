@@ -91,7 +91,6 @@ const HeroSection = () => {
         onSwitchToSignUp={handleSwitchToSignUp}
       />
 
-      {/* Sign Up Modal */}
       <SignUpModal
         isOpen={isSignUpModalOpen}
         onClose={handleCloseModals}
