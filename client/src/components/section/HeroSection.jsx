@@ -36,7 +36,7 @@ const HeroSection = () => {
 
   return (
     <>
-      <div className="min-h-screen flex justify-center items-start pt-20 sm:pt-24 md:pt-32 lg:pt-40 pb-12 sm:pb-16 md:pb-20 lg:pb-24">
+      <div className="flex justify-center items-center pt-20 sm:pt-24 md:pt-32 lg:pt-40 pb-16 sm:pb-20 md:pb-24 lg:pb-28">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="mb-6 sm:mb-8 lg:mb-10">
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-6xl text-headingText font-bold leading-tight mb-4 sm:mb-6 md:mb-8 lg:mb-10">
