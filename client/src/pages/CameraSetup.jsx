@@ -1,13 +1,26 @@
 import React, { useEffect, useRef, useState } from "react";
 import PublicLayout from "../layout/PublicLayout.jsx";
+import { useNavigate, useLocation } from "react-router-dom";
 
 export default function CameraSetup() {
+  const navigate = useNavigate();
+  const location = useLocation();
   const videoRef = useRef(null);
   const [error, setError] = useState("");
   const [devices, setDevices] = useState({ video: [], audio: [] });
   const [selectedVideo, setSelectedVideo] = useState("");
   const [selectedAudio, setSelectedAudio] = useState("");
   const [stream, setStream] = useState(null);
+
+  // Get interview settings from navigation state
+  const interviewSettings = location.state?.interviewSettings;
+
+  // Redirect to interview settings if no settings data
+  useEffect(() => {
+    if (!interviewSettings) {
+      navigate("/interview-settings");
+    }
+  }, [interviewSettings, navigate]);
 
   useEffect(() => {
     let initialStream;
@@ -70,6 +83,11 @@ export default function CameraSetup() {
       }
     };
   }, [selectedVideo, selectedAudio]);
+
+  // Don't render if no interview settings
+  if (!interviewSettings) {
+    return null;
+  }
 
   return (
     <PublicLayout>
@@ -134,7 +152,7 @@ export default function CameraSetup() {
                       autoPlay
                       playsInline
                       muted
-                      className="object-cover w-full h-full"
+                      className="object-cover w-full h-full scale-x-[-1]"
                     />
                   )}
                 </div>
@@ -153,7 +171,12 @@ export default function CameraSetup() {
 
               {/* Action Button */}
               <div className="text-center">
-                <button className="bg-blue-600 hover:bg-blue-700 text-white px-12 py-4 rounded-full font-semibold text-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105">
+                <button
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-12 py-4 rounded-full font-semibold text-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
+                  onClick={() =>
+                    navigate("/interview", { state: { interviewSettings } })
+                  }
+                >
                   Start Interview
                 </button>
                 <p className="text-sm text-gray-500 mt-4 max-w-md">
