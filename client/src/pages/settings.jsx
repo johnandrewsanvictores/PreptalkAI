@@ -3,16 +3,21 @@ import { useLocation } from "react-router-dom";
 import PublicLayout from "../layout/PublicLayout.jsx";
 import { showSuccess } from "../utils/alertHelper.js";
 import api from "../../axious.js";
-import { useAuth } from "../context/AuthContext.jsx";
+import {useAuth} from "../context/AuthContext.jsx";
+import UploadResumeModal from "../components/modals/uploadResumeModal.jsx";
+import MicroComp from "../components/microComp.jsx";
 
 const Settings = () => {
   const location = useLocation();
   const formattedText = location.state?.formattedText;
   const [activeTab, setActiveTab] = useState("personal");
   const [isEditing, setIsEditing] = useState(false);
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+
   const { user, userContext, setUserContext } = useAuth();
 
   const hasRunUserContext = useRef(false);
+  const hasFetchedBusiness = useRef(false);
 
   const [personalInfo, setPersonalInfo] = useState({
     fullName: "",
@@ -32,14 +37,48 @@ const Settings = () => {
     lastName: "",
     email: "",
     username: "",
-    userType: "Freelancer",
+    userType: "",
     oldPassword: "",
     newPassword: "",
     confirmNewPassword: "",
   });
 
+  // Entrepreneur specific business info
+  const [businessInfo, setBusinessInfo] = useState({
+    businessName: "",
+    businessType: "",
+    industry: "",
+    businessLocation: "",
+    yearsInBusiness: "",
+    employees: "",
+    businessDescription: "",
+    businessGoals: "",
+  });
+
+  const handleBusinessChange = (e) => {
+    const { name, value } = e.target;
+    setBusinessInfo((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
   useEffect(() => {
     if (hasRunUserContext.current) return;
+
+    // For entrepreneur: fetch existing business info
+    const fetchBusiness = async () => {
+      try {
+        const res = await api.get('/business', { withCredentials: true });
+        if (res.data.business) {
+          setBusinessInfo(res.data.business);
+        }
+      } catch {
+        // ignore
+      } finally {
+        hasFetchedBusiness.current = true;
+      }
+    };
 
     const fetchFreelancer = async () => {
       try {
@@ -77,7 +116,12 @@ const Settings = () => {
       if (user.userType === "freelancer") {
         console.log("helloworld");
         console.log(userContext);
-        setPersonalInfo(userContext);
+        if (userContext) {
+          setPersonalInfo(userContext);
+        }
+      }
+      if(user.userType !== 'freelancer' && !hasFetchedBusiness.current) {
+        fetchBusiness();
       }
     }
   }, []);
@@ -116,15 +160,32 @@ const Settings = () => {
     }));
   };
 
-  const handleSave = () => {
-    if (activeTab === "personal") {
-      console.log("Personal Info Saved:", personalInfo);
-      showSuccess("Personal information saved successfully!", "Success!");
-    } else {
-      console.log("Account Info Saved:", accountInfo);
-      showSuccess("Account information saved successfully!", "Success!");
+  const handleSave = async () => {
+    try {
+      if (activeTab === "personal") {
+        if (user?.userType === "freelancer") {
+          // Save / update resume for freelancer
+          await api.post("/user/createResume", { ...personalInfo }, { withCredentials: true });
+          setUserContext(personalInfo);
+        } else {
+          // TODO: Call an endpoint for entrepreneur business info when available
+          console.log("Business info saved:", businessInfo);
+          await api.post('/business', businessInfo, { withCredentials: true });
+        }
+        showSuccess("Information saved successfully!", "Success!");
+      } else {
+        // Save / update basic account info
+        await api.put(
+          "/auth/updateUser",
+          { ...accountInfo, _id: user.userId },
+          { withCredentials: true }
+        );
+        showSuccess("Account information saved successfully!", "Success!");
+      }
+      setIsEditing(false);
+    } catch (err) {
+      console.error("Save error:", err);
     }
-    setIsEditing(false);
   };
 
   const handleEdit = () => {
@@ -189,8 +250,8 @@ const Settings = () => {
               </button>
             </div>
 
-            <div className="bg-bgColor2 rounded-xl p-8">
-              {activeTab === "personal" && (
+            <div className={`bg-bgColor2 rounded-xl p-8 ${user?.userType !== 'freelancer' ? 'hidden' : ''}`}>
+              {activeTab === "personal" && user?.userType === 'freelancer' && (
                 <div>
                   <div className="flex items-center gap-4 mb-8">
                     <i className="fa-solid fa-user text-primary text-h4"></i>
@@ -205,9 +266,12 @@ const Settings = () => {
                         {getUserInitials()}
                       </span>
                     </div>
-                    <button className="bg-gray-100 text-headingText px-4 py-2 rounded-lg text-h6 hover:bg-gray-200 transition-colors">
-                      <i className="fa-solid fa-camera mr-2"></i>
-                      Change photo
+                    <button
+                      className="bg-primary text-white px-4 py-2 rounded-lg text-h6 hover:bg-primary/90 transition-colors"
+                      onClick={() => setIsUploadModalOpen(true)}
+                    >
+                      <i className="fa-solid fa-upload mr-2"></i>
+                      {personalInfo.fullName ? "Update Resume" : "Upload Resume"}
                     </button>
                   </div>
 
@@ -362,7 +426,7 @@ const Settings = () => {
                 </div>
               )}
 
-              {activeTab === "account" && (
+              {activeTab === "account" && user?.userType === 'freelancer' && (
                 <div>
                   <div className="flex items-center gap-4 mb-8">
                     <i className="fa-solid fa-gear text-primary text-h4"></i>
@@ -377,9 +441,12 @@ const Settings = () => {
                         {getUserInitials()}
                       </span>
                     </div>
-                    <button className="bg-gray-100 text-headingText px-4 py-2 rounded-lg text-h6 hover:bg-gray-200 transition-colors">
-                      <i className="fa-solid fa-camera mr-2"></i>
-                      Change photo
+                    <button
+                      className="bg-primary text-white px-4 py-2 rounded-lg text-h6 hover:bg-primary/90 transition-colors"
+                      onClick={() => setIsUploadModalOpen(true)}
+                    >
+                      <i className="fa-solid fa-upload mr-2"></i>
+                      {personalInfo.fullName ? "Update Resume" : "Upload Resume"}
                     </button>
                   </div>
 
@@ -537,9 +604,60 @@ const Settings = () => {
                 </button>
               </div>
             </div>
+
+            {/* Entrepreneur / Micro-business settings */}
+            {user?.userType !== 'freelancer' && (
+              <MicroComp
+                activeTab={activeTab}
+                setActiveTab={setActiveTab}
+                isEditing={isEditing}
+                handleEdit={handleEdit}
+                handleSave={handleSave}
+                getUserInitials={getUserInitials}
+                accountInfo={accountInfo}
+                handleAccountChange={handleAccountChange}
+                businessInfo={businessInfo}
+                handleBusinessChange={handleBusinessChange}
+              />
+            )}
+
+            {/* Edit / Save buttons for entrepreneur */}
+            {user?.userType !== 'freelancer' && (
+              <div className="flex justify-center gap-4 mt-8">
+                <button
+                  onClick={handleEdit}
+                  disabled={isEditing}
+                  className={`px-8 py-3 rounded-lg text-h6 font-medium transition-colors ${
+                    isEditing
+                      ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                      : "bg-primary text-white hover:bg-primary/90"
+                  }`}
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={handleSave}
+                  disabled={!isEditing}
+                  className={`px-8 py-3 rounded-lg text-h6 font-medium transition-colors ${
+                    !isEditing
+                      ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                      : "bg-gray-300 text-headingText hover:bg-gray-400"
+                  }`}
+                >
+                  Save
+                </button>
+              </div>
+            )}
           </div>
         </main>
       </div>
+      {/* Resume upload modal */}
+      <UploadResumeModal
+        isOpen={isUploadModalOpen}
+        onClose={() => setIsUploadModalOpen(false)}
+        onSkip={() => setIsUploadModalOpen(false)}
+        onUpload={() => setIsUploadModalOpen(false)}
+      />
     </PublicLayout>
   );
 };

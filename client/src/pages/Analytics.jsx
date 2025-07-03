@@ -180,7 +180,9 @@ export default function Analytics() {
     },
   ];
 
-  const stats = analyticsData?.stats
+  const hasBackendData = analyticsData && Array.isArray(analyticsData.stats) && analyticsData.stats.length > 0;
+
+  const stats = hasBackendData
     ? analyticsData.stats.map((s) => ({
         ...s,
         icon:
@@ -487,6 +489,10 @@ export default function Analytics() {
                 </div>
               ))}
             </div>
+
+            {!hasBackendData && (
+              <p className="text-center text-subHeadingText mb-12">No data yet.</p>
+            )}
 
             <div className="grid sm:grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 mb-12">
               <div className="bg-bgColor2 rounded-xl shadow-lg p-4 sm:p-6 lg:p-8 h-100">
