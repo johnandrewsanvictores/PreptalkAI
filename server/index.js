@@ -8,6 +8,9 @@ import authRoutes from './routes/auth.js';
 import emailRoutes from './routes/email.js';
 import userRoutes from './routes/user.js';
 import connectDbB from './config/db.js';
+import dashboardRoutes from './routes/dashboard.js';
+import analyticsRoutes from './routes/analytics.js';
+import historyRoutes from './routes/history.js';
 
 import fs from 'fs/promises';
 import path from 'path';
@@ -60,6 +63,9 @@ const upload = multer({ dest: path.join(__dirname, 'uploads') });
 
 app.use('/auth', authRoutes);
 app.use('/mail', emailRoutes);
+app.use('/dashboard', dashboardRoutes);
+app.use('/analytics', analyticsRoutes);
+app.use('/history', historyRoutes);
 app.use('/user', userRoutes);
 app.post('/upload-resume', upload.single('resume'), async (req, res) => {
     try {
