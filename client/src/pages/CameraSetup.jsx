@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import PublicLayout from "../layout/PublicLayout.jsx";
 import { useNavigate, useLocation } from "react-router-dom";
+import {useAuth} from "../context/AuthContext.jsx";
 
 export default function CameraSetup() {
   const navigate = useNavigate();

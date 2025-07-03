@@ -30,7 +30,7 @@ router.get('/user/profile', auth, async (req, res) => {
             return res.status(404).json({ error: 'User not found' });
         }
 
-        res.json({user});
+        res.json({ user: { ...user.toObject(), userId: user._id } });
     } catch (err) {
         console.error('Profile error:', err);
         res.status(500).json({ error: 'Server error' });
