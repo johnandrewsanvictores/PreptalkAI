@@ -28,7 +28,7 @@ const KeyFeatureAndBenefitsSection = () => {
       summary:
         "Upload your resume and get AI-powered analysis and suggestions.",
       description:
-        "Our advanced AI analyzes your resume to identify strengths, weaknesses, and areas for improvement. Get personalized recommendations to optimize your resume for specific job roles and increase your chances of landing interviews.",
+        "Users (freelancers or MSMEs) can upload their resume or business profile through a secure uploader. The system uses this input to generate tailored interview or pitch questions, ensuring that simulations are realistic and relevant to the user’s actual experience or business context.",
     },
     {
       icon: Bot,
@@ -36,7 +36,7 @@ const KeyFeatureAndBenefitsSection = () => {
       summary:
         "Choose from specialized AI interviewers for different industries.",
       description:
-        "Select from a diverse range of AI interviewers, each trained for specific industries and job roles. Whether you're applying for tech, finance, healthcare, or marketing positions, our AI agents provide relevant and challenging interview experiences.",
+        "Users can choose from a range of AI personas like a tech recruiter, startup investor, HR executive, or loan officer. Each agent provides unique personalities, helping users practice for different audiences and improving adaptability, nonverbal fluency, and cultural sensitivity.",
     },
     {
       icon: Settings,
@@ -44,35 +44,35 @@ const KeyFeatureAndBenefitsSection = () => {
       summary:
         "Personalize your interview experience with custom configurations.",
       description:
-        "Tailor your mock interviews by setting difficulty levels, interview duration, question types, and focus areas. Create practice sessions that match your specific needs and target job requirements for maximum preparation effectiveness.",
+        "Adjust your session by selecting the interview type, difficulty level, number of questions, and preferred mode. This lets you tailor each experience to your current needs and learning goals.",
     },
     {
       icon: Mic,
       title: "Interactive Mock Interviews",
       summary: "Practice with real-time voice and video mock interviews.",
       description:
-        "Engage in realistic mock interviews with voice recognition and video analysis. Our AI provides real-time feedback on your verbal responses, body language, eye contact, and overall presentation to help you perform your best.",
+        "Simulate real interviews or business pitches with dynamic follow-up questions from AI agents. These help build your confidence, adaptability, and communication skills in realistic scenarios.",
     },
     {
       icon: BarChart2,
       title: "Performance Analytics",
       summary: "Track your progress with detailed analytics and insights.",
       description:
-        "Monitor your improvement over time with comprehensive analytics dashboard. View detailed metrics on response quality, confidence levels, speaking pace, and areas of strength. Identify patterns and focus on specific skills that need development.",
+        "Monitor your progress over time through an analytics dashboard. It shows trends, improvements, and insights to help you prepare smarter.",
     },
     {
       icon: Star,
       title: "AI Recommendations",
       summary: "Get personalized suggestions to improve your interview skills.",
       description:
-        "Receive tailored recommendations based on your performance history and target roles. Our AI suggests specific areas to focus on, practice questions, and resources to help you continuously improve your interview success rate.",
+        "Based on your performance, the system provides tailored practice suggestions. These help you continuously improve in specific skill areas.",
     },
     {
       icon: CreditCard,
       title: "Flexible Pricing",
       summary: "Start free and upgrade as you grow your career.",
       description:
-        "Begin with our generous free tier that includes basic mock interviews and feedback. Upgrade to premium plans for advanced features like industry-specific scenarios, detailed analytics, and unlimited practice sessions.",
+        "Enjoy full access to all features during your first three sessions. After the trial, continue practicing through a flexible and affordable credit-based system.",
     },
   ];
 
