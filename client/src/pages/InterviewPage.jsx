@@ -3,6 +3,8 @@ import { useNavigate, useLocation } from "react-router-dom";
 import QuitInterviewModal from "../components/modals/quitInterviewModal.jsx";
 import FinishInterviewModal from "../components/modals/finishInterviewModal.jsx";
 import imageBackground from "../assets/officeBG.jpg";
+import {useAuth} from "../context/AuthContext.jsx";
+import {getFreelancerQPrompt} from "../data/questionPrompt.js";
 
 export default function InterviewPage() {
   const navigate = useNavigate();
@@ -11,23 +13,25 @@ export default function InterviewPage() {
   const [error, setError] = useState("");
   const [stream, setStream] = useState(null);
 
+  const { user, userContext } = useAuth();
+  const [personalInfo, setPersonalInfo] = useState({
+    bio :userContext.bio,
+    certification: userContext.certification,
+    education: userContext.education,
+    email: userContext.email,
+    fullName: userContext.fullName,
+    hardSkills: userContext.hardSkills,
+    jobRole: userContext.jobRole,
+    location: userContext.location,
+    projects: userContext.projects,
+    softSkills: userContext.softSkills
+  });
+
   const interviewSettings = location.state?.interviewSettings;
 
   const isPracticeMode = interviewSettings?.interviewType === "practice";
 
-  useEffect(() => {
-    if (!interviewSettings) {
-      navigate("/interview-settings");
-    }
-  }, [interviewSettings, navigate]);
-
-  const [questions, setQuestions] = useState([
-    "Tell me about yourself and how your experience aligns with this role.",
-    "What is your greatest strength?",
-    "What is your greatest weakness?",
-    "Why do you want to work for us?",
-    "What are your salary expectations?",
-  ]);
+  const [questions, setQuestions] = useState([]);
 
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [showQuitModal, setShowQuitModal] = useState(false);
@@ -35,6 +39,47 @@ export default function InterviewPage() {
   const [timeRemaining, setTimeRemaining] = useState(180);
   const [isEndButtonHovered, setIsEndButtonHovered] = useState(false);
   const [isRealInterviewStarted, setIsRealInterviewStarted] = useState(false);
+
+
+  useEffect(() => {
+    if (!interviewSettings) {
+      navigate("/interview-settings");
+    }
+
+
+    if(user.userType === "freelancer"){
+      const num = Math.floor(Math.random() * 100) + 1;
+      console.log(num);
+      const prompt = getFreelancerQPrompt(personalInfo, interviewSettings, num);
+
+      console.log(prompt);
+      const encodedPrompt = encodeURIComponent(prompt.trim());
+      const fetchFreelancerQPrompt = async () => {
+        try {
+          const response = await fetch(`https://text.pollinations.ai/${encodedPrompt}`);
+          if (!response.ok) {
+            throw new Error(`API request failed: ${response.statusText}`);
+          }
+          const resultText = await response.text();
+
+          const q = JSON.parse(resultText);
+          console.log(q);
+          setQuestions(q);
+          return q;
+        } catch (error) {
+          console.error("Error fetching interview questions:", error);
+          return null;
+        }
+      }
+
+      fetchFreelancerQPrompt()
+
+      console.log(questions);
+    }
+
+
+
+  }, [interviewSettings, navigate]);
 
   useEffect(() => {
     let initialStream;

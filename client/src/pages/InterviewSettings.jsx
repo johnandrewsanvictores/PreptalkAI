@@ -12,51 +12,51 @@ import RonaImage from "../assets/Rona.png";
 const agents = [
   {
     name: "Brandon",
-    role: "System Design Expert",
-    personality: "Analytical and Detail-Oriented",
+    role: "",
+    personality: "Confident, formal, authoritative male",
     img: BrandonImage,
     description:
-      "Expert in technical interviews for software engineering roles. Specializes in coding challenges and system design.",
+      "",
   },
   {
     name: "Davis",
-    role: "Creative & Marketing Specialist",
-    personality: "Engaging and Collaborative",
+    role: "",
+    personality: "Unfriendly, older male",
     img: DavisImage,
     description:
-      "Focuses on behavioral interviews and leadership assessments. Perfect for management and executive positions.",
+      "",
   },
   {
     name: "Harvey",
-    role: "Behavioral Interview Expert",
-    personality: "Warm, Friendly and Engaging",
+    role: "",
+    personality: "Disinterested, monotone male",
     img: HarveyImage,
     description:
-      "Specializes in marketing and creative role interviews. Expert in portfolio reviews and creative problem-solving.",
+      "",
   },
   {
     name: "Sara",
-    role: "Technical Coding Expert",
-    personality: "Logical and Systematic",
+    role: "",
+    personality: "Serious, older female",
     img: SaraImage,
     description:
-      "Finance and consulting interview specialist. Covers case studies, analytical thinking, and quantitative reasoning.",
+      "",
   },
   {
     name: "Rosa",
-    role: "Leadership & Strategy Expert",
-    personality: "Professional and Motivating",
+    role: "",
+    personality: "Supportive but Direct Career Coach",
     img: RosaImage,
     description:
-      "Healthcare and medical field expert. Experienced in clinical scenarios and healthcare management interviews.",
+      "",
   },
   {
     name: "Rona",
-    role: "Sales & Business Development Expert",
-    personality: "Engaging and Collaborative",
+    role: "",
+    personality: "friendly female",
     img: RonaImage,
     description:
-      "Sales and business development specialist. Masters relationship building and performance-based interview techniques.",
+      "",
   },
 ];
 
@@ -68,7 +68,7 @@ export default function InterviewSettings() {
   const [numQuestions, setNumQuestions] = useState("");
   const [maximumFQ, setMaximumFQ] = useState("");
   const [interviewType, setInterviewType] = useState("practice");
-  const [questionType, setQuestionType] = useState("");
+  const [questionType, setQuestionType] = useState({});
 
   const navigate = useNavigate();
 
@@ -463,9 +463,9 @@ export default function InterviewSettings() {
                 ].map((type) => (
                   <div
                     key={type.id}
-                    onClick={() => setQuestionType(type.id)}
+                    onClick={() => setQuestionType(prev => ({...prev, id:type.id, description:type.description, focus:type.focus}))}
                     className={`bg-bgColor rounded-xl p-4 sm:p-5 lg:p-6 cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-lg border-2 ${
-                      questionType === type.id
+                      questionType.id === type.id
                         ? "border-primary shadow-lg bg-primary/5"
                         : "border-transparent hover:border-primary/30"
                     }`}
