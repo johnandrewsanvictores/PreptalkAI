@@ -1,36 +1,43 @@
 import Resume from "../models/resumeModel.js";
 
+// POST /user/createResume – authenticated user only
 export const createResume = async (req, res) => {
     try {
-        console.log(req.body);
-        const resume = await Resume.create({...req.body});
-        
+        const authUserId = req.user?.userId;
+
+        // Prevent clients from forging another userId in the body
+        const sanitizedBody = { ...req.body, userId: authUserId };
+
+        // If a resume already exists for this user, update it instead of creating duplicate
+        const resume = await Resume.findOneAndUpdate(
+            { userId: authUserId },
+            sanitizedBody,
+            { new: true, upsert: true }
+        );
+
         res.status(201).json({
-            resume: resume,
-            success: "true",
-            message: "Resume Info added successfully"
+            resume,
+            success: true,
+            message: "Resume saved successfully"
         });
-    } catch(error) {
+    } catch (error) {
         res.status(500).json({ message: 'Server error', error: error.message });
     }
-}
+};
 
+// GET /user/resume – returns resume for the authenticated user
 export const getResume = async (req, res) => {
     try {
-        const userId = req.query.userId;
+        const authUserId = req.user?.userId;
 
-        if (!userId) {
-            return res.status(400).json({ error: 'Missing userId' });
-        }
-
-        const resume = await Resume.findOne({userId});
+        const resume = await Resume.findOne({ userId: authUserId });
 
         res.status(200).json({
-            resume: resume,
-            success: "true",
-            message: "Resume Info added successfully"
-        })
-    }catch(error) {
+            resume,
+            success: true,
+            message: "Fetched resume successfully"
+        });
+    } catch (error) {
         res.status(500).json({ message: 'Server error', error: error.message });
     }
-}
+};

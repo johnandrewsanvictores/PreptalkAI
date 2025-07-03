@@ -3,6 +3,7 @@ import logo from "../../assets/PrepTalkAIlogo.png";
 import axios from "axios";
 import api from "../../../axious.js";
 import { useNavigate } from "react-router-dom";
+import { showSuccess } from "../../utils/alertHelper.js";
 
 const UploadResumeModal = ({ isOpen, onClose, onSkip, onUpload }) => {
   const [dragActive, setDragActive] = useState(false);
@@ -135,7 +136,14 @@ ${rawText}
       const formatted = pollRes.data;
 
       setFormattedText({ formatted });
+
+      // ✅ Show success toast
+      showSuccess("Resume analyzed successfully!", "Success!");
+
+      // Close modal after showing success (toast auto-closes)
+      onUpload?.();
       resetModal?.();
+
       console.log(formattedText);
       navigate("/settings", { state: { formattedText: formatted } });
 
