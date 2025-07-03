@@ -27,10 +27,6 @@ const MicroComp = ({
                 {getUserInitials()}
               </span>
             </div>
-            <button className="bg-gray-100 text-headingText px-4 py-2 rounded-lg text-h6 hover:bg-gray-200 transition-colors">
-              <i className="fa-solid fa-camera mr-2"></i>
-              Change photo
-            </button>
           </div>
 
           <div className="grid grid-cols-2 gap-6">
@@ -168,10 +164,6 @@ const MicroComp = ({
                 {getUserInitials()}
               </span>
             </div>
-            <button className="bg-gray-100 text-headingText px-4 py-2 rounded-lg text-h6 hover:bg-gray-200 transition-colors">
-              <i className="fa-solid fa-camera mr-2"></i>
-              Change photo
-            </button>
           </div>
 
           <div className="grid grid-cols-2 gap-6 mb-8">

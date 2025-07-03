@@ -39,6 +39,10 @@ export default function InterviewPage() {
   const [timeRemaining, setTimeRemaining] = useState(180);
   const [isEndButtonHovered, setIsEndButtonHovered] = useState(false);
   const [isRealInterviewStarted, setIsRealInterviewStarted] = useState(false);
+  const [realTimer, setRealTimer] = useState(0);
+  const [dotCount, setDotCount] = useState(0);
+  const [isPracticeReady, setIsPracticeReady] = useState(false);
+  const [isRealReady, setIsRealReady] = useState(false);
 
 
   useEffect(() => {
@@ -198,6 +202,44 @@ export default function InterviewPage() {
     }
   }, [isPracticeMode, currentQuestion, questions.length]);
 
+  useEffect(() => {
+    if (!isPracticeMode && isRealInterviewStarted) {
+      setRealTimer(0);
+      setDotCount(0);
+      const interval = setInterval(() => {
+        setRealTimer((prev) => {
+          const next = prev + 1;
+          if (next === 3) setDotCount(1);
+          if (next === 6) setDotCount(2);
+          if (next === 9) setDotCount(3);
+          if (next >= 10) {
+            setDotCount(0);
+            clearInterval(interval);
+            if (currentQuestion < questions.length - 1) {
+              setCurrentQuestion((q) => q + 1);
+            } else {
+              setShowFinishModal(true);
+            }
+          }
+          return next;
+        });
+      }, 1000);
+      return () => clearInterval(interval);
+    }
+  }, [
+    isPracticeMode,
+    isRealInterviewStarted,
+    currentQuestion,
+    questions.length,
+  ]);
+
+  useEffect(() => {
+    if (!isPracticeMode && isRealInterviewStarted) {
+      setRealTimer(0);
+      setDotCount(0);
+    }
+  }, [currentQuestion, isPracticeMode, isRealInterviewStarted]);
+
   const formatTime = (seconds) => {
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = seconds % 60;
@@ -210,6 +252,37 @@ export default function InterviewPage() {
 
   return (
     <div className="relative h-screen bg-gradient-to-br from-teal-100 via-blue-50 to-indigo-100 overflow-hidden">
+      {!isPracticeMode && isRealInterviewStarted && (
+        <div className="fixed top-0 left-1/2 transform -translate-x-1/2 z-[100] flex justify-center items-center">
+          <span
+            className={`mx-2 text-5xl font-bold transition-opacity duration-300 ${
+              dotCount === 1
+                ? "text-primary opacity-100"
+                : "text-primary opacity-30"
+            }`}
+          >
+            .
+          </span>
+          <span
+            className={`mx-2 text-5xl font-bold transition-opacity duration-300 ${
+              dotCount === 2
+                ? "text-yellow-400 opacity-100"
+                : "text-gray-400 opacity-30"
+            }`}
+          >
+            ?
+          </span>
+          <span
+            className={`mx-2 text-5xl font-bold transition-opacity duration-300 ${
+              dotCount === 3
+                ? "text-red opacity-100"
+                : "text-gray-400 opacity-30"
+            }`}
+          >
+            !
+          </span>
+        </div>
+      )}
       <div className="absolute inset-0 opacity-80">
         <img
           src={imageBackground}
@@ -237,6 +310,28 @@ export default function InterviewPage() {
         )}
       </div>
 
+      {/* End Interview button only in Practice Mode */}
+      {isPracticeMode && (
+        <button
+          onClick={handleBackClick}
+          onMouseEnter={() => setIsEndButtonHovered(true)}
+          onMouseLeave={() => setIsEndButtonHovered(false)}
+          className="fixed top-0 left-0 m-4 z-50 px-8 py-3 rounded-lg font-medium shadow-lg transition-all duration-200"
+          style={{
+            backgroundColor: isEndButtonHovered ? "#B83D3D" : "#DE5656",
+            color: "white",
+            transform: isEndButtonHovered
+              ? "translateY(-1px)"
+              : "translateY(0px)",
+            boxShadow: isEndButtonHovered
+              ? "0 10px 25px rgba(222, 86, 86, 0.4)"
+              : "0 4px 6px rgba(0, 0, 0, 0.1)",
+          }}
+        >
+          End Interview
+        </button>
+      )}
+
       {/* AI Interviewer - Natural placement without background */}
       {interviewSettings?.selectedAgent?.img ? (
         <div className="absolute left-1/2 bottom-[160px] transform -translate-x-1/2 z-20">
@@ -254,118 +349,96 @@ export default function InterviewPage() {
         </div>
       )}
 
-      <div className="absolute bottom-0 left-0 right-0 bg-white/95 backdrop-blur-sm border-t border-gray-200 p-6 h-[160px]">
-        <div className="max-w-4xl mx-auto h-full flex flex-col justify-center">
+      <div className="absolute bottom-0 left-0 right-0 bg-white/95 backdrop-blur-sm border-t border-gray-200 h-[160px]">
+        <div className="w-full h-full flex flex-col px-6">
           {isPracticeMode ? (
             <>
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-semibold text-gray-800">
-                  {questions[currentQuestion]}
-                </h2>
-                <div className="flex items-center space-x-4">
-                  <div className="flex space-x-2">
-                    <button
-                      onClick={handlePreviousQuestion}
-                      disabled={currentQuestion === 0}
-                      className="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                    >
-                      <svg
-                        className="w-5 h-5 text-gray-600"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M15 19l-7-7 7-7"
-                        />
-                      </svg>
-                    </button>
-                    <button
-                      onClick={handleNextQuestion}
-                      disabled={currentQuestion === questions.length - 1}
-                      className="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                    >
-                      <svg
-                        className="w-5 h-5 text-gray-600"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M9 5l7 7-7 7"
-                        />
-                      </svg>
-                    </button>
+              <div className="w-full h-auto">
+                {!isPracticeReady ? (
+                  <div className="flex flex-col items-start justify-start h-full">
+                    <span className="text-xl font-semibold text-gray-800 mb-4">
+                      Are you ready?
+                    </span>
                   </div>
-                  <div className="bg-gray-100 px-4 py-2 rounded-full text-sm font-medium text-gray-600">
-                    Question {currentQuestion + 1}
-                  </div>
-                </div>
+                ) : (
+                  <h2
+                    className="text-h6 text-gray-800 text-left leading-relaxed tracking-normal"
+                    style={{ padding: 0, margin: 0 }}
+                  >
+                    {questions[currentQuestion]}
+                  </h2>
+                )}
               </div>
-
-              <div className="flex justify-center space-x-4">
-                <button
-                  onClick={handleReadyClick}
-                  className="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium shadow-lg"
-                >
-                  {currentQuestion === questions.length - 1
-                    ? "Finish Interview"
-                    : "I'm Ready"}
-                </button>
-                <button
-                  onClick={handleBackClick}
-                  onMouseEnter={() => setIsEndButtonHovered(true)}
-                  onMouseLeave={() => setIsEndButtonHovered(false)}
-                  className="px-8 py-3 rounded-lg font-medium shadow-lg transition-all duration-200"
-                  style={{
-                    backgroundColor: isEndButtonHovered ? "#B83D3D" : "#DE5656",
-                    color: "white",
-                    transform: isEndButtonHovered
-                      ? "translateY(-1px)"
-                      : "translateY(0px)",
-                    boxShadow: isEndButtonHovered
-                      ? "0 10px 25px rgba(222, 86, 86, 0.4)"
-                      : "0 4px 6px rgba(0, 0, 0, 0.1)",
-                  }}
-                >
-                  End Interview
-                </button>
-              </div>
-            </>
-          ) : (
-            // Real Interview Mode - Using same container structure as Practice Mode
-            <>
-              <div className="flex items-center justify-center mb-4">
-                <h2 className="text-xl font-semibold text-gray-800">
-                  {questions[currentQuestion]}
-                </h2>
-              </div>
-
-              {!isRealInterviewStarted && (
-                <div className="flex justify-center mb-3">
+              <div className="absolute left-1/2 bottom-2 transform -translate-x-1/2 flex space-x-4">
+                {!isPracticeReady ? (
                   <button
-                    onClick={() => {
-                      setIsRealInterviewStarted(true);
-                      if (currentQuestion < questions.length - 1) {
-                        setCurrentQuestion(currentQuestion + 1);
-                      } else {
-                        setShowFinishModal(true);
-                      }
-                    }}
+                    onClick={() => setIsPracticeReady(true)}
+                    className="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium shadow-lg"
+                  >
+                    Yes
+                  </button>
+                ) : (
+                  <button
+                    onClick={handleReadyClick}
                     className="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium shadow-lg"
                   >
                     {currentQuestion === questions.length - 1
                       ? "Finish Interview"
-                      : "Start"}
+                      : "Skip Question"}
+                  </button>
+                )}
+              </div>
+            </>
+          ) : (
+            // Real Interview Mode - Match Practice Mode layout
+            <>
+              <div className="w-full h-auto">
+                {!isRealReady ? (
+                  <div className="flex flex-col items-start justify-start h-full">
+                    <span className="text-xl font-semibold text-gray-800 mb-4">
+                      Are you ready?
+                    </span>
+                  </div>
+                ) : (
+                  isRealInterviewStarted && (
+                    <h2
+                      className="text-h6 text-gray-800 text-left leading-relaxed tracking-normal"
+                      style={{ padding: 0, margin: 0 }}
+                    >
+                      {questions[currentQuestion]}
+                    </h2>
+                  )
+                )}
+              </div>
+              {!isRealReady ? (
+                <div className="absolute left-1/2 bottom-2 transform -translate-x-1/2 flex space-x-4">
+                  <button
+                    onClick={() => {
+                      setIsRealReady(true);
+                      setIsRealInterviewStarted(true);
+                      setCurrentQuestion(0);
+                    }}
+                    className="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium shadow-lg"
+                  >
+                    Start
                   </button>
                 </div>
+              ) : (
+                !isRealInterviewStarted && (
+                  <div className="absolute left-1/2 bottom-2 transform -translate-x-1/2 flex space-x-4">
+                    <button
+                      onClick={() => {
+                        setIsRealInterviewStarted(true);
+                        setCurrentQuestion(0);
+                      }}
+                      className="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium shadow-lg"
+                    >
+                      Start
+                    </button>
+                  </div>
+                )
               )}
+              {/* No Finish Interview button in Real Interview mode; handled by modal when last question is done */}
             </>
           )}
         </div>

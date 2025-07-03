@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import PublicLayout from "../layout/PublicLayout.jsx";
 import { useNavigate } from "react-router-dom";
 import { FaCamera } from "react-icons/fa";
+import { useAuth } from "../context/AuthContext.jsx";
 import BrandonImage from "../assets/Brandon.png";
 import DavisImage from "../assets/Davis.png";
 import HarveyImage from "../assets/Harvey.png";
@@ -71,6 +72,82 @@ export default function InterviewSettings() {
   const [questionType, setQuestionType] = useState({});
 
   const navigate = useNavigate();
+  const { user } = useAuth();
+
+  // Interview types for freelancers (existing types)
+  const freelancerInterviewTypes = [
+    {
+      id: "behavioral",
+      title: "Behavioral Interview",
+      focus: "Communication, Self-Motivation, Teamwork, Resilience",
+      description:
+        "Share real-life experiences to highlight how you collaborate, stay motivated, and handle challenges. This interview type focuses on your soft skills in past situations to reveal your soft skills.",
+    },
+    {
+      id: "technical",
+      title: "Technical Interview",
+      focus:
+        "Critical Thinking, Analytical Reasoning, Attention to Detail, Technical Clarity",
+      description:
+        "Demonstrate how you solve problems, explain processes, and approach tasks logically. This interview is designed to test your thinking and technical articulation.",
+    },
+    {
+      id: "situational",
+      title: "Situational Interview",
+      focus:
+        "Decision-Making, Adaptability, Conflict Resolution, Prioritization",
+      description:
+        "Respond to hypothetical scenarios that reflect real workplace situations. It evaluates how well you make decisions, handle pressure, and adapt to change.",
+    },
+    {
+      id: "all-in-one",
+      title: "All-in-one Interview",
+      focus: "All Skills from Other Interview Types",
+      description:
+        "Experience a full simulation that blends behavioral, technical, and situational questions. It's ideal for overall soft skills and strategic thinking.",
+    },
+  ];
+
+  const entrepreneurInterviewTypes = [
+    {
+      id: "product-presentation",
+      title: "Product Presentation",
+      focus: "Clarity, Confidence, Engagement, Structure",
+      description:
+        "Practice delivering your product or service clearly and confidently. Learn how to capture attention, keep your audience engaged, and structure your message for maximum impact.",
+    },
+    {
+      id: "customer-interaction",
+      title: "Customer Interaction",
+      focus: "Though questions, Empathy, Adaptability, Trust",
+      description:
+        "Simulate real customer conversations—especially the hard ones. Improve how you listen, respond, and build trust during inquiries, feedback sessions, or objections.",
+    },
+    {
+      id: "business-pitching",
+      title: "Business Pitching",
+      focus:
+        "Problem Solution, Value Proposition Client, Investor Appeal, Collaboration",
+      description:
+        "Train for high-stakes pitches to investors, partners, or clients. Learn to clearly present your business problem, value, and vision in a persuasive and professional way.",
+    },
+    {
+      id: "all-in-one",
+      title: "All-in-one Interview",
+      focus: "All Skills from Other Interview Types",
+      description:
+        "Experience a full simulation that blends product presentation, customer interaction, and business pitching it’s ideal for advanced practice, testing your overall soft skills and strategic thinking.",
+    },
+  ];
+
+  const getInterviewTypes = () => {
+    if (user?.userType === "entrep") {
+      return entrepreneurInterviewTypes;
+    }
+    return freelancerInterviewTypes;
+  };
+
+  const currentInterviewTypes = getInterviewTypes();
 
   const prevAgent = () =>
     setCurrent((prev) => (prev === 0 ? agents.length - 1 : prev - 1));
@@ -78,11 +155,11 @@ export default function InterviewSettings() {
     setCurrent((prev) => (prev === agents.length - 1 ? 0 : prev + 1));
 
   const handleOnNext = () => {
-    // Validate required fields
     if (!questionType) {
-      alert(
-        "Please select an interview type (Behavioral, Technical, Situational, or All-in-one)"
-      );
+      const interviewTypeNames = currentInterviewTypes
+        .map((type) => type.title)
+        .join(", ");
+      alert(`Please select an interview type (${interviewTypeNames})`);
       return;
     }
 
@@ -428,39 +505,7 @@ export default function InterviewSettings() {
                   !questionType ? "ring-2 ring-red rounded-xl p-4" : ""
                 }`}
               >
-                {[
-                  {
-                    id: "behavioral",
-                    title: "Behavioral Interview",
-                    focus:
-                      "Communication, Self-Motivation, Teamwork, Resilience",
-                    description:
-                      "Share real-life experiences to highlight how you collaborate, stay motivated, and handle challenges. This interview type focuses on your soft skills in past situations to reveal your soft skills.",
-                  },
-                  {
-                    id: "technical",
-                    title: "Technical Interview",
-                    focus:
-                      "Critical Thinking, Analytical Reasoning, Attention to Detail, Technical Clarity",
-                    description:
-                      "Demonstrate how you solve problems, explain processes, and approach tasks logically. This interview is designed to test your thinking and technical articulation.",
-                  },
-                  {
-                    id: "situational",
-                    title: "Situational Interview",
-                    focus:
-                      "Decision-Making, Adaptability, Conflict Resolution, Prioritization",
-                    description:
-                      "Respond to hypothetical scenarios that reflect real workplace situations. It evaluates how well you make decisions, handle pressure, and adapt to change.",
-                  },
-                  {
-                    id: "all-in-one",
-                    title: "All-in-one Interview",
-                    focus: "All Skills from Other Interview Types",
-                    description:
-                      "Experience a full simulation that blends behavioral, technical, and situational questions. It's ideal for overall soft skills and strategic thinking.",
-                  },
-                ].map((type) => (
+                {currentInterviewTypes.map((type) => (
                   <div
                     key={type.id}
                     onClick={() => setQuestionType(prev => ({...prev, id:type.id, description:type.description, focus:type.focus}))}

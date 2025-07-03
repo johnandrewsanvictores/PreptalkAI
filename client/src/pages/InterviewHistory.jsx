@@ -100,7 +100,7 @@ export default function InterviewHistory() {
               Review your past interview sessions and track your progress
             </p>
 
-            <div className="grid grid-cols-2 gap-4 sm:gap-6 md:grid-cols-4 mb-12">
+            <div className="grid grid-cols-2 gap-4 sm:gap-6 md:grid-cols-4 mb-4">
               {stats.map((stat) => (
                 <div
                   key={stat.label}
@@ -120,6 +120,10 @@ export default function InterviewHistory() {
                 </div>
               ))}
             </div>
+
+            {!historyData && (
+              <p className="text-center text-subHeadingText mb-8">No data yet.</p>
+            )}
 
             <div className="bg-bgColor2 rounded-xl shadow-lg p-8">
               <h2 className="text-h4 font-semibold mb-8 text-headingText">

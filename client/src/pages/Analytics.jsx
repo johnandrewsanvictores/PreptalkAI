@@ -9,28 +9,39 @@ import {
   faFire,
 } from "@fortawesome/free-solid-svg-icons";
 import PublicLayout from "../layout/PublicLayout.jsx";
-import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, BarElement, Title, Tooltip, Legend, Filler } from 'chart.js';
-import { Line, Bar } from 'react-chartjs-2';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+  Filler,
+} from "chart.js";
+import { Line, Bar } from "react-chartjs-2";
 import api from "../../axious.js";
+import { useAuth } from "../context/AuthContext.jsx";
 
 ChartJS.register(
-    CategoryScale,
-    LinearScale,
-    PointElement,
-    LineElement,
-    BarElement,
-    Title,
-    Tooltip,
-    Legend,
-    Filler
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+  Filler
 );
-
-
 
 export default function Analytics() {
   const [filter, setFilter] = useState("Last 30 Days");
   const [selectedInterview, setSelectedInterview] = useState("behavioral");
   const [analyticsData, setAnalyticsData] = useState(null);
+  const { user } = useAuth();
 
   useEffect(() => {
     const fetchAnalytics = async () => {
@@ -51,21 +62,21 @@ export default function Analytics() {
 
   // Default/fallback chart
   const defaultChartData = {
-    labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+    labels: ["Week 1", "Week 2", "Week 3", "Week 4"],
     datasets: [
       {
-        label: 'Interview Score',
+        label: "Interview Score",
         data: [65, 72, 80, 84],
-        borderColor: '#3b82f6', // blue-500
-        backgroundColor: 'rgba(59, 130, 246, 0.2)',
+        borderColor: "#3b82f6", // blue-500
+        backgroundColor: "rgba(59, 130, 246, 0.2)",
         tension: 0.3,
         fill: true,
-        pointBackgroundColor: '#3b82f6',
-        pointBorderColor: '#fff',
+        pointBackgroundColor: "#3b82f6",
+        pointBorderColor: "#fff",
         pointHoverRadius: 6,
         pointHoverBorderWidth: 2,
-      }
-    ]
+      },
+    ],
   };
 
   const chartData = analyticsData
@@ -73,14 +84,14 @@ export default function Analytics() {
         labels: analyticsData.chart.labels,
         datasets: [
           {
-            label: 'Interview Score',
+            label: "Interview Score",
             data: analyticsData.chart.data,
-            borderColor: '#3b82f6',
-            backgroundColor: 'rgba(59, 130, 246, 0.2)',
+            borderColor: "#3b82f6",
+            backgroundColor: "rgba(59, 130, 246, 0.2)",
             tension: 0.3,
             fill: true,
-            pointBackgroundColor: '#3b82f6',
-            pointBorderColor: '#fff',
+            pointBackgroundColor: "#3b82f6",
+            pointBorderColor: "#fff",
             pointHoverRadius: 6,
             pointHoverBorderWidth: 2,
           },
@@ -94,7 +105,7 @@ export default function Analytics() {
     maintainAspectRatio: false,
     plugins: {
       legend: {
-        position: 'top',
+        position: "top",
         labels: {
           boxWidth: 0,
           font: {
@@ -103,7 +114,7 @@ export default function Analytics() {
         },
       },
       tooltip: {
-        backgroundColor: '#1e293b',
+        backgroundColor: "#1e293b",
         titleFont: { size: 16 },
         bodyFont: { size: 14 },
         padding: 12,
@@ -123,11 +134,11 @@ export default function Analytics() {
         ticks: {
           stepSize: 10,
           callback: function (value) {
-            return value + '%';
+            return value + "%";
           },
         },
         grid: {
-          color: 'rgba(0, 0, 0, 0.05)',
+          color: "rgba(0, 0, 0, 0.05)",
         },
       },
       x: {
@@ -169,29 +180,32 @@ export default function Analytics() {
     },
   ];
 
-  const stats = analyticsData?.stats
+  const hasBackendData = analyticsData && Array.isArray(analyticsData.stats) && analyticsData.stats.length > 0;
+
+  const stats = hasBackendData
     ? analyticsData.stats.map((s) => ({
         ...s,
         icon:
-          s.label === 'Avg Score'
+          s.label === "Avg Score"
             ? faBullseye
-            : s.label === 'Total Practice Interview'
+            : s.label === "Total Practice Interview"
             ? faChartBar
-            : s.label === 'Practice Time'
+            : s.label === "Practice Time"
             ? faClock
             : faFire,
         color:
-          s.label === 'Avg Score'
-            ? 'text-blue-600'
-            : s.label === 'Total Practice Interview'
-            ? 'text-green-600'
-            : s.label === 'Practice Time'
-            ? 'text-blue-600'
-            : 'text-orange-600',
+          s.label === "Avg Score"
+            ? "text-blue-600"
+            : s.label === "Total Practice Interview"
+            ? "text-green-600"
+            : s.label === "Practice Time"
+            ? "text-blue-600"
+            : "text-orange-600",
       }))
     : defaultStats;
 
-  const defaultSkillsMap = {
+  // Skills maps for freelancers
+  const freelancerSkillsMap = {
     behavioral: [
       { name: "Communication", score: 85 },
       { name: "Self-Motivation", score: 80 },
@@ -226,22 +240,101 @@ export default function Analytics() {
     ],
   };
 
+  // Skills maps for micro-entrepreneurs
+  const entrepreneurSkillsMap = {
+    "product-presentation": [
+      { name: "Clarity", score: 85 },
+      { name: "Confidence", score: 80 },
+      { name: "Engagement", score: 75 },
+      { name: "Structure", score: 78 },
+    ],
+    "customer-interaction": [
+      { name: "Though questions", score: 82 },
+      { name: "Empathy", score: 79 },
+      { name: "Adaptability", score: 85 },
+      { name: "Trust", score: 77 },
+    ],
+    "business-pitching": [
+      { name: "Problem Solution", score: 80 },
+      { name: "Value Proposition Client", score: 83 },
+      { name: "Investor Appeal", score: 78 },
+      { name: "Collaboration", score: 75 },
+    ],
+    "all-in-one": [
+      { name: "Clarity", score: 85 },
+      { name: "Confidence", score: 80 },
+      { name: "Engagement", score: 75 },
+      { name: "Structure", score: 78 },
+      { name: "Though questions", score: 82 },
+      { name: "Empathy", score: 79 },
+      { name: "Adaptability", score: 85 },
+      { name: "Trust", score: 77 },
+      { name: "Problem Solution", score: 80 },
+      { name: "Value Proposition Client", score: 83 },
+      { name: "Investor Appeal", score: 78 },
+      { name: "Collaboration", score: 75 },
+    ],
+  };
+
+  // Get appropriate skills map based on user type
+  const getSkillsMap = () => {
+    if (user?.userType === "entrep") {
+      return entrepreneurSkillsMap;
+    }
+    return freelancerSkillsMap;
+  };
+
+  const defaultSkillsMap = getSkillsMap();
+
   const skillsMap = analyticsData?.skillsMap ?? defaultSkillsMap;
 
-  const interviewOptions = [
+  // Interview options for freelancers
+  const freelancerInterviewOptions = [
     { id: "behavioral", label: "Behavioral Interview" },
     { id: "technical", label: "Technical Interview" },
     { id: "situational", label: "Situational Interview" },
     { id: "all-in-one", label: "All-in-one Interview" },
   ];
 
-  // Bar chart config for skills (used when many skills e.g., all-in-one)
+  // Interview options for micro-entrepreneurs
+  const entrepreneurInterviewOptions = [
+    { id: "product-presentation", label: "Product Presentation" },
+    { id: "customer-interaction", label: "Customer Interaction" },
+    { id: "business-pitching", label: "Business Pitching" },
+    { id: "all-in-one", label: "All-in-one Interview" },
+  ];
+
+  // Get appropriate interview options based on user type
+  const getInterviewOptions = () => {
+    if (user?.userType === "entrep") {
+      return entrepreneurInterviewOptions;
+    }
+    return freelancerInterviewOptions;
+  };
+
+  const interviewOptions = getInterviewOptions();
+
+  // Update selectedInterview default based on user type
+  useEffect(() => {
+    if (user?.userType === "entrep") {
+      setSelectedInterview("product-presentation");
+    } else {
+      setSelectedInterview("behavioral");
+    }
+  }, [user?.userType]);
+
+  // Bar chart config for skills
+  const getBarChartDataKey = () => {
+    return "all-in-one"; // Both freelancers and entrepreneurs have all-in-one
+  };
+
+  const barChartDataKey = getBarChartDataKey();
   const skillsBarData = {
-    labels: skillsMap["all-in-one"].map((s) => s.name),
+    labels: skillsMap[barChartDataKey]?.map((s) => s.name) || [],
     datasets: [
       {
         label: "Score",
-        data: skillsMap["all-in-one"].map((s) => s.score),
+        data: skillsMap[barChartDataKey]?.map((s) => s.score) || [],
         backgroundColor: "#2F80ED",
         borderRadius: 4,
       },
@@ -251,7 +344,7 @@ export default function Analytics() {
   const skillsBarOptions = {
     responsive: true,
     maintainAspectRatio: false,
-    indexAxis: 'x', // vertical bars
+    indexAxis: "x", // vertical bars
     scales: {
       y: {
         beginAtZero: true,
@@ -260,7 +353,7 @@ export default function Analytics() {
         ticks: {
           stepSize: 20,
           callback: function (value) {
-            return value + '%';
+            return value + "%";
           },
         },
       },
@@ -273,7 +366,7 @@ export default function Analytics() {
       tooltip: {
         callbacks: {
           label: function (context) {
-            return context.parsed.y + '%';
+            return context.parsed.y + "%";
           },
         },
       },
@@ -282,14 +375,45 @@ export default function Analytics() {
 
   const skills = skillsMap[selectedInterview] || [];
 
-  // Default interview types
-  const defaultInterviewTypes = [
-    { name: "Technical", score: 0, sessions: 0, color: "bg-blue-100" },
-    { name: "Behavioral", score: 0, sessions: 0, color: "bg-green-100" },
-    { name: "Design", score: 0, sessions: 0, color: "bg-yellow-100" },
-    { name: "Adaptability", score: 0, sessions: 0, color: "bg-orange-100" },
-  ];
+  // Default interview types based on user type
+  const getDefaultInterviewTypes = () => {
+    if (user?.userType === "entrep") {
+      return [
+        {
+          name: "Product Presentation",
+          score: 0,
+          sessions: 0,
+          color: "bg-blue-100",
+        },
+        {
+          name: "Customer Interaction",
+          score: 0,
+          sessions: 0,
+          color: "bg-green-100",
+        },
+        {
+          name: "Business Pitching",
+          score: 0,
+          sessions: 0,
+          color: "bg-yellow-100",
+        },
+        {
+          name: "All-in-one Interview",
+          score: 0,
+          sessions: 0,
+          color: "bg-orange-100",
+        },
+      ];
+    }
+    return [
+      { name: "Technical", score: 0, sessions: 0, color: "bg-blue-100" },
+      { name: "Behavioral", score: 0, sessions: 0, color: "bg-green-100" },
+      { name: "Situational", score: 0, sessions: 0, color: "bg-yellow-100" },
+      { name: "All-in-one", score: 0, sessions: 0, color: "bg-orange-100" },
+    ];
+  };
 
+  const defaultInterviewTypes = getDefaultInterviewTypes();
   const interviewTypes = analyticsData?.interviewTypes ?? defaultInterviewTypes;
 
   // Default recommendations
@@ -308,14 +432,17 @@ export default function Analytics() {
     },
   ];
 
-  const recommendations = analyticsData?.recommendations ?? defaultRecommendations;
+  const recommendations =
+    analyticsData?.recommendations ?? defaultRecommendations;
 
   return (
     <PublicLayout>
       <div className="min-h-screen flex flex-col bg-bgColor">
         <main className="flex-1 flex flex-col items-center py-12 px-4">
           <div className="w-full max-w-7xl">
-            <h1 className="text-h3 sm:text-h2 font-bold text-primary mb-3">Analytics</h1>
+            <h1 className="text-h3 sm:text-h2 font-bold text-primary mb-3">
+              Analytics
+            </h1>
             <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
               <p className="text-h6 text-subHeadingText mb-6 md:mb-0">
                 Track your interview performance and progress over time.
@@ -363,6 +490,10 @@ export default function Analytics() {
               ))}
             </div>
 
+            {!hasBackendData && (
+              <p className="text-center text-subHeadingText mb-12">No data yet.</p>
+            )}
+
             <div className="grid sm:grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 mb-12">
               <div className="bg-bgColor2 rounded-xl shadow-lg p-4 sm:p-6 lg:p-8 h-100">
                 <h3 className="text-h6 sm:text-h5 text-subHeadingText mb-3 sm:mb-4">
@@ -390,7 +521,7 @@ export default function Analytics() {
                     ))}
                   </select>
                 </div>
-                {selectedInterview === "all-in-one" ? (
+                {selectedInterview === barChartDataKey ? (
                   <div className="h-48 sm:h-64">
                     <Bar data={skillsBarData} options={skillsBarOptions} />
                   </div>
