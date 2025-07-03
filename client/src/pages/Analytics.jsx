@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBullseye,
@@ -11,6 +11,7 @@ import {
 import PublicLayout from "../layout/PublicLayout.jsx";
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, BarElement, Title, Tooltip, Legend, Filler } from 'chart.js';
 import { Line, Bar } from 'react-chartjs-2';
+import api from "../../axious.js";
 
 ChartJS.register(
     CategoryScale,
@@ -29,13 +30,27 @@ ChartJS.register(
 export default function Analytics() {
   const [filter, setFilter] = useState("Last 30 Days");
   const [selectedInterview, setSelectedInterview] = useState("behavioral");
+  const [analyticsData, setAnalyticsData] = useState(null);
+
+  useEffect(() => {
+    const fetchAnalytics = async () => {
+      try {
+        const { data } = await api.get("/analytics");
+        setAnalyticsData(data);
+      } catch (err) {
+        console.error("Failed to load analytics", err);
+      }
+    };
+
+    fetchAnalytics();
+  }, []);
 
   const handleExport = () => {
     alert(`Exporting analytics data for ${filter}`);
   };
 
-  // Chart data configuration
-  const chartData = {
+  // Default/fallback chart
+  const defaultChartData = {
     labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
     datasets: [
       {
@@ -53,6 +68,27 @@ export default function Analytics() {
     ]
   };
 
+  const chartData = analyticsData
+    ? {
+        labels: analyticsData.chart.labels,
+        datasets: [
+          {
+            label: 'Interview Score',
+            data: analyticsData.chart.data,
+            borderColor: '#3b82f6',
+            backgroundColor: 'rgba(59, 130, 246, 0.2)',
+            tension: 0.3,
+            fill: true,
+            pointBackgroundColor: '#3b82f6',
+            pointBorderColor: '#fff',
+            pointHoverRadius: 6,
+            pointHoverBorderWidth: 2,
+          },
+        ],
+      }
+    : defaultChartData;
+
+  // Options for the line chart
   const chartOptions = {
     responsive: true,
     maintainAspectRatio: false,
@@ -62,56 +98,51 @@ export default function Analytics() {
         labels: {
           boxWidth: 0,
           font: {
-            size: 14
-          }
-        }
+            size: 14,
+          },
+        },
       },
       tooltip: {
         backgroundColor: '#1e293b',
-        titleFont: {
-          size: 16
-        },
-        bodyFont: {
-          size: 14
-        },
+        titleFont: { size: 16 },
+        bodyFont: { size: 14 },
         padding: 12,
         usePointStyle: true,
         callbacks: {
-          label: function(context) {
+          label: function (context) {
             return `${context.dataset.label}: ${context.parsed.y}%`;
-          }
-        }
-      }
+          },
+        },
+      },
     },
     scales: {
       y: {
         beginAtZero: false,
-        min: 50,
+        min: 0,
         max: 100,
         ticks: {
           stepSize: 10,
-          callback: function(value) {
+          callback: function (value) {
             return value + '%';
-          }
+          },
         },
         grid: {
-          color: 'rgba(0, 0, 0, 0.05)'
-        }
+          color: 'rgba(0, 0, 0, 0.05)',
+        },
       },
       x: {
         grid: {
-          display: false
-        }
-      }
+          display: false,
+        },
+      },
     },
     elements: {
-      line: {
-        borderWidth: 3
-      }
-    }
+      line: { borderWidth: 3 },
+    },
   };
 
-  const stats = [
+  // Default stats
+  const defaultStats = [
     {
       label: "Avg Score",
       value: "84%",
@@ -138,7 +169,29 @@ export default function Analytics() {
     },
   ];
 
-  const skillsMap = {
+  const stats = analyticsData?.stats
+    ? analyticsData.stats.map((s) => ({
+        ...s,
+        icon:
+          s.label === 'Avg Score'
+            ? faBullseye
+            : s.label === 'Total Practice Interview'
+            ? faChartBar
+            : s.label === 'Practice Time'
+            ? faClock
+            : faFire,
+        color:
+          s.label === 'Avg Score'
+            ? 'text-blue-600'
+            : s.label === 'Total Practice Interview'
+            ? 'text-green-600'
+            : s.label === 'Practice Time'
+            ? 'text-blue-600'
+            : 'text-orange-600',
+      }))
+    : defaultStats;
+
+  const defaultSkillsMap = {
     behavioral: [
       { name: "Communication", score: 85 },
       { name: "Self-Motivation", score: 80 },
@@ -172,6 +225,8 @@ export default function Analytics() {
       { name: "Prioritization", score: 83 },
     ],
   };
+
+  const skillsMap = analyticsData?.skillsMap ?? defaultSkillsMap;
 
   const interviewOptions = [
     { id: "behavioral", label: "Behavioral Interview" },
@@ -225,16 +280,20 @@ export default function Analytics() {
     },
   };
 
-  const skills = skillsMap[selectedInterview];
+  const skills = skillsMap[selectedInterview] || [];
 
-  const interviewTypes = [
-    { name: "Technical", score: 89, sessions: 12, color: "bg-blue-100" },
-    { name: "Behavioral", score: 70, sessions: 7, color: "bg-green-100" },
-    { name: "Design", score: 78, sessions: 2, color: "bg-yellow-100" },
-    { name: "Adaptability", score: 91, sessions: 5, color: "bg-orange-100" },
+  // Default interview types
+  const defaultInterviewTypes = [
+    { name: "Technical", score: 0, sessions: 0, color: "bg-blue-100" },
+    { name: "Behavioral", score: 0, sessions: 0, color: "bg-green-100" },
+    { name: "Design", score: 0, sessions: 0, color: "bg-yellow-100" },
+    { name: "Adaptability", score: 0, sessions: 0, color: "bg-orange-100" },
   ];
 
-  const recommendations = [
+  const interviewTypes = analyticsData?.interviewTypes ?? defaultInterviewTypes;
+
+  // Default recommendations
+  const defaultRecommendations = [
     {
       title: "Focus Area",
       color: "bg-yellow-50",
@@ -247,19 +306,9 @@ export default function Analytics() {
       content:
         "Your communication is balanced. Maintain clear communication while adding concise examples to support your points.",
     },
-    {
-      title: "Next Goal",
-      color: "bg-blue-50",
-      content:
-        "Increase average score to 90% by reaching 3 more sessions this month.",
-    },
-    {
-      title: "Consistency",
-      color: "bg-purple-50",
-      content:
-        "Continue practicing at regular intervals! Try to maintain the momentum of at least 2 sessions per week.",
-    },
   ];
+
+  const recommendations = analyticsData?.recommendations ?? defaultRecommendations;
 
   return (
     <PublicLayout>

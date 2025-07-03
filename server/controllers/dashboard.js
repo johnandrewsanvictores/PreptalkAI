@@ -6,10 +6,15 @@ export const getDashboardData = async (req, res) => {
         //  In a real implementation you would query multiple collections (sessions, scores, etc.)
         //  using the authenticated user id that was injected by the auth middleware.
         //  For now we return mocked data so the front-end can already integrate with the API.
-        const userId = req.user?.userId;
+        const authUserId = req.user?.userId;
+
+        const requestedUserId = req.params.userId || req.query.userId;
+        if (requestedUserId && requestedUserId !== String(authUserId)) {
+            return res.status(403).json({ error: "Forbidden – You can only access your own dashboard" });
+        }
 
         //  👉  Basic user information (first name is handy for greeting)
-        const user = await User.findById(userId).select("firstName");
+        const user = await User.findById(authUserId).select("firstName");
 
         const quickOverview = {
             totalSessions: 0,
