@@ -1,17 +1,16 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 import PublicLayout from "../layout/PublicLayout.jsx";
 import { showSuccess } from "../utils/alertHelper.js";
 import api from "../../axious.js";
-import {useAuth} from "../context/AuthContext.jsx";
+import { useAuth } from "../context/AuthContext.jsx";
 
 const Settings = () => {
   const location = useLocation();
   const formattedText = location.state?.formattedText;
   const [activeTab, setActiveTab] = useState("personal");
   const [isEditing, setIsEditing] = useState(false);
-
-  const {user, userContext, setUserContext} = useAuth();
+  const { user, userContext, setUserContext } = useAuth();
 
   const hasRunUserContext = useRef(false);
 
@@ -39,55 +38,49 @@ const Settings = () => {
     confirmNewPassword: "",
   });
 
-
-
   useEffect(() => {
     if (hasRunUserContext.current) return;
-
-
 
     const fetchFreelancer = async () => {
       try {
         console.log(user.userId);
         const res = await api.post(
-            "/user/createResume",
-            {
-              fullName: formattedText.fullName,
-              email: formattedText.email,
-              location: formattedText.location,
-              jobRole: formattedText.jobRole,
-              softSkills: formattedText.softSkills,
-              hardSkills: formattedText.hardSkills,
-              education: formattedText.education,
-              projects: formattedText.projects,
-              certification: formattedText.certification,
-              bio: formattedText.bio,
-              userId: user.userId,
-            },
-            { withCredentials: true }
+          "/user/createResume",
+          {
+            fullName: formattedText.fullName,
+            email: formattedText.email,
+            location: formattedText.location,
+            jobRole: formattedText.jobRole,
+            softSkills: formattedText.softSkills,
+            hardSkills: formattedText.hardSkills,
+            education: formattedText.education,
+            projects: formattedText.projects,
+            certification: formattedText.certification,
+            bio: formattedText.bio,
+            userId: user.userId,
+          },
+          { withCredentials: true }
         );
 
-        setUserContext({...personalInfo, userId: user._id});
-
+        setUserContext({ ...personalInfo, userId: user._id });
       } catch {
         setUserContext(null);
       }
-    }
-    if(formattedText) {
-      if(user.userType === 'freelancer') {
+    };
+    if (formattedText) {
+      if (user.userType === "freelancer") {
         console.log(formattedText);
         fetchFreelancer();
         hasRunUserContext.current = true;
       }
-    }else {
-      if(user.userType === 'freelancer') {
+    } else {
+      if (user.userType === "freelancer") {
         console.log("helloworld");
         console.log(userContext);
         setPersonalInfo(userContext);
       }
-
     }
-  }, [])
+  }, []);
 
   useEffect(() => {
     if (formattedText) {
@@ -105,8 +98,6 @@ const Settings = () => {
         bio: formattedText.bio || "",
       }));
     }
-
-
   }, [formattedText]);
 
   const handlePersonalChange = (e) => {
