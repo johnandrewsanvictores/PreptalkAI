@@ -2,37 +2,61 @@ import React, { useState } from "react";
 import PublicLayout from "../layout/PublicLayout.jsx";
 import { useNavigate } from "react-router-dom";
 import { FaCamera } from "react-icons/fa";
+import BrandonImage from "../assets/Brandon.png";
+import DavisImage from "../assets/Davis.png";
+import HarveyImage from "../assets/Harvey.png";
+import SaraImage from "../assets/Sara.png";
+import RosaImage from "../assets/Rosa.png";
+import RonaImage from "../assets/Rona.png";
 
 const agents = [
   {
-    name: "Orion",
+    name: "Brandon",
     role: "System Design Expert",
     personality: "Analytical and Detail-Oriented",
-    img: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    img: BrandonImage,
+    description:
+      "Expert in technical interviews for software engineering roles. Specializes in coding challenges and system design.",
   },
   {
-    name: "Zane",
+    name: "Davis",
     role: "Creative & Marketing Specialist",
     personality: "Engaging and Collaborative",
-    img: "https://plus.unsplash.com/premium_photo-1682096252599-e8536cd97d2b?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    img: DavisImage,
+    description:
+      "Focuses on behavioral interviews and leadership assessments. Perfect for management and executive positions.",
   },
   {
-    name: "Cypher",
+    name: "Harvey",
     role: "Behavioral Interview Expert",
     personality: "Warm, Friendly and Engaging",
-    img: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop&crop=face",
+    img: HarveyImage,
+    description:
+      "Specializes in marketing and creative role interviews. Expert in portfolio reviews and creative problem-solving.",
   },
   {
-    name: "Lyra",
+    name: "Sara",
     role: "Technical Coding Expert",
     personality: "Logical and Systematic",
-    img: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    img: SaraImage,
+    description:
+      "Finance and consulting interview specialist. Covers case studies, analytical thinking, and quantitative reasoning.",
   },
   {
-    name: "Apollo",
+    name: "Rosa",
     role: "Leadership & Strategy Expert",
     personality: "Professional and Motivating",
-    img: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    img: RosaImage,
+    description:
+      "Healthcare and medical field expert. Experienced in clinical scenarios and healthcare management interviews.",
+  },
+  {
+    name: "Rona",
+    role: "Sales & Business Development Expert",
+    personality: "Engaging and Collaborative",
+    img: RonaImage,
+    description:
+      "Sales and business development specialist. Masters relationship building and performance-based interview techniques.",
   },
 ];
 
@@ -54,7 +78,48 @@ export default function InterviewSettings() {
     setCurrent((prev) => (prev === agents.length - 1 ? 0 : prev + 1));
 
   const handleOnNext = () => {
-    navigate("/camera-setup");
+    // Validate required fields
+    if (!questionType) {
+      alert(
+        "Please select an interview type (Behavioral, Technical, Situational, or All-in-one)"
+      );
+      return;
+    }
+
+    if (!numQuestions || numQuestions < 1 || numQuestions > 10) {
+      alert("Please enter a valid number of main questions (1-10)");
+      return;
+    }
+
+    if (maximumFQ === "" || maximumFQ < 0 || maximumFQ > 5) {
+      alert("Please enter a valid number of follow-up questions (0-5)");
+      return;
+    }
+
+    // If all validations pass, navigate to camera setup with settings data
+    const interviewSettings = {
+      selectedAgent: agents[current],
+      difficulty: difficulties[difficulty],
+      questionType,
+      numQuestions: parseInt(numQuestions),
+      maximumFQ: parseInt(maximumFQ),
+      interviewType,
+    };
+
+    navigate("/camera-setup", { state: { interviewSettings } });
+  };
+
+  // Check if all required fields are filled
+  const isFormValid = () => {
+    return (
+      questionType &&
+      numQuestions &&
+      numQuestions >= 1 &&
+      numQuestions <= 10 &&
+      maximumFQ !== "" &&
+      maximumFQ >= 0 &&
+      maximumFQ <= 5
+    );
   };
 
   return (
@@ -267,14 +332,8 @@ export default function InterviewSettings() {
 
               <div className="text-center">
                 <div className="bg-bgColor rounded-xl p-4 sm:p-6 max-w-2xl mx-auto">
-                  <h3 className="text-h6 sm:text-h5 lg:text-h4 font-bold text-headingText mb-2">
-                    {agents[current].name}
-                  </h3>
-                  <p className="text-p sm:text-h6 text-primary font-semibold mb-2">
-                    {agents[current].role}
-                  </p>
-                  <p className="text-small sm:text-p text-subHeadingText mb-4">
-                    {agents[current].personality}
+                  <p className="text-h6 text-subHeadingText hidden lg:block mb-5">
+                    {agents[current].description}
                   </p>
                   <button className="bg-primary text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-semibold text-small sm:text-p hover:bg-primary/90 transition-colors shadow-md">
                     <svg
@@ -349,16 +408,26 @@ export default function InterviewSettings() {
                   How should questions be handled?
                 </h2>
                 <h3 className="text-h6 sm:text-h5 font-semibold text-primary mb-3 sm:mb-4">
-                  Select type of Interview
+                  Select type of Interview{" "}
+                  <span className="text-red text-h6">*</span>
                 </h3>
                 <p className="text-small sm:text-p lg:text-h6 text-subHeadingText max-w-4xl mx-auto px-2">
                   Choose the interview type you want to practice. Each type is
                   designed to help you improve specific soft skills based on
                   real-world scenarios.
                 </p>
+                {!questionType && (
+                  <div className="mt-2 text-red text-small font-medium">
+                    Please select an interview type to continue
+                  </div>
+                )}
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8 sm:mb-10 lg:mb-12">
+              <div
+                className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8 sm:mb-10 lg:mb-12 ${
+                  !questionType ? "ring-2 ring-red rounded-xl p-4" : ""
+                }`}
+              >
                 {[
                   {
                     id: "behavioral",
@@ -438,7 +507,8 @@ export default function InterviewSettings() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 max-w-4xl mx-auto">
                   <div>
                     <label className="block text-p sm:text-h6 font-semibold text-headingText mb-2 sm:mb-3">
-                      Number of Main Questions
+                      Number of Main Questions{" "}
+                      <span className="text-red text-h6">*</span>
                       <span className="text-small text-subHeadingText font-normal ml-2">
                         (max 10)
                       </span>
@@ -449,13 +519,28 @@ export default function InterviewSettings() {
                       max="10"
                       value={numQuestions}
                       onChange={(e) => setNumQuestions(e.target.value)}
-                      className="w-full border border-gray-300 rounded-lg px-3 sm:px-4 py-3 sm:py-4 text-small sm:text-p bg-bgColor2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
+                      className={`w-full border rounded-lg px-3 sm:px-4 py-3 sm:py-4 text-small sm:text-p bg-bgColor2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-colors ${
+                        !numQuestions || numQuestions < 1 || numQuestions > 10
+                          ? "border-red"
+                          : "border-gray-300"
+                      }`}
                       placeholder="Enter a number"
                     />
+                    {(!numQuestions ||
+                      numQuestions < 1 ||
+                      numQuestions > 10) && (
+                      <div className="mt-1 text-red text-small">
+                        Please enter a number between 1 and 10
+                      </div>
+                    )}
                   </div>
                   <div>
                     <label className="block text-p sm:text-h6 font-semibold text-headingText mb-2 sm:mb-3">
-                      Enter Number of Follow-Up Questions
+                      Enter Number of Follow-Up Questions{" "}
+                      <span className="text-red text-h6">*</span>
+                      <span className="text-small text-subHeadingText font-normal ml-2">
+                        (max 5)
+                      </span>
                     </label>
                     <input
                       type="number"
@@ -463,9 +548,18 @@ export default function InterviewSettings() {
                       max="5"
                       value={maximumFQ}
                       onChange={(e) => setMaximumFQ(e.target.value)}
-                      className="w-full border border-gray-300 rounded-lg px-3 sm:px-4 py-3 sm:py-4 text-small sm:text-p bg-bgColor2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
+                      className={`w-full border rounded-lg px-3 sm:px-4 py-3 sm:py-4 text-small sm:text-p bg-bgColor2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-colors ${
+                        maximumFQ === "" || maximumFQ < 0 || maximumFQ > 5
+                          ? "border-red"
+                          : "border-gray-300"
+                      }`}
                       placeholder="Enter a number"
                     />
+                    {(maximumFQ === "" || maximumFQ < 0 || maximumFQ > 5) && (
+                      <div className="mt-1 text-red text-small">
+                        Please enter a number between 0 and 5
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -550,12 +644,38 @@ export default function InterviewSettings() {
               </div>
             </div>
 
+            {!isFormValid() && (
+              <div className="bg-red/10 border border-red rounded-lg p-4 mb-6 text-center max-w-2xl mx-auto">
+                <h4 className="font-semibold text-red mb-2">
+                  Please complete all required fields:
+                </h4>
+                <ul className="text-small text-red space-y-1">
+                  {!questionType && <li>• Select an interview type</li>}
+                  {(!numQuestions || numQuestions < 1 || numQuestions > 10) && (
+                    <li>• Enter number of main questions (1-10)</li>
+                  )}
+                  {(maximumFQ === "" || maximumFQ < 0 || maximumFQ > 5) && (
+                    <li>• Enter number of follow-up questions (0-5)</li>
+                  )}
+                </ul>
+              </div>
+            )}
+
             <div className="flex justify-center">
               <button
                 onClick={handleOnNext}
-                className="bg-primary text-white px-8 sm:px-10 lg:px-12 py-3 sm:py-4 rounded-lg font-semibold text-p sm:text-h6 hover:bg-primary/90 transition-all shadow-lg flex items-center gap-2 sm:gap-3"
+                disabled={!isFormValid()}
+                className={`px-8 sm:px-10 lg:px-12 py-3 sm:py-4 rounded-lg font-semibold text-p sm:text-h6 transition-all shadow-lg flex items-center gap-2 sm:gap-3 ${
+                  isFormValid()
+                    ? "bg-primary text-white hover:bg-primary/90 cursor-pointer"
+                    : "bg-gray-400 text-gray-200 cursor-not-allowed opacity-60"
+                }`}
               >
-                <FaCamera size={20} className="sm:w-6 sm:h-6" color="#fff" />
+                <FaCamera
+                  size={20}
+                  className="sm:w-6 sm:h-6"
+                  color={isFormValid() ? "#fff" : "#d1d5db"}
+                />
                 <span className="hidden sm:inline">
                   Continue to Camera Setup
                 </span>

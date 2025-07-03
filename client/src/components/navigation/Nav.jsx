@@ -114,34 +114,15 @@ const Nav = () => {
 
           <div className="hidden lg:flex lg:justify-center lg:flex-1">
             <div className="flex space-x-6 xl:space-x-10 items-center">
-              {user ? (
-                <>
-                  <NavLink to="/dashboard" className={getNavLinkClass}>
-                    Dashboard
-                  </NavLink>
-                  <NavLink to="/interview-history" className={getNavLinkClass}>
-                    Interview History
-                  </NavLink>
-                  <NavLink to="/analytics" className={getNavLinkClass}>
-                    Analytics
-                  </NavLink>
-                  <NavLink to="/billing" className={getNavLinkClass}>
-                    Billing
-                  </NavLink>
-                </>
-              ) : (
-                <>
-                  <NavLink to="/" className={getNavLinkClass}>
-                    Home
-                  </NavLink>
-                  <NavLink to="/about" className={getNavLinkClass}>
-                    About
-                  </NavLink>
-                  <NavLink to="/billing" className={getNavLinkClass}>
-                    Billing
-                  </NavLink>
-                </>
-              )}
+              <NavLink to="/" className={getNavLinkClass}>
+                Home
+              </NavLink>
+              <NavLink to="/about" className={getNavLinkClass}>
+                About
+              </NavLink>
+              <NavLink to="/billing" className={getNavLinkClass}>
+                Billing
+              </NavLink>
             </div>
           </div>
 
@@ -182,6 +163,27 @@ const Nav = () => {
                         {user.email}
                       </p>
                     </div>
+                    <NavLink
+                      to="/dashboard"
+                      className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
+                      onClick={() => setIsDropdownOpen(false)}
+                    >
+                      Dashboard
+                    </NavLink>
+                    <NavLink
+                      to="/interview-history"
+                      className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
+                      onClick={() => setIsDropdownOpen(false)}
+                    >
+                      Interview History
+                    </NavLink>
+                    <NavLink
+                      to="/analytics"
+                      className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
+                      onClick={() => setIsDropdownOpen(false)}
+                    >
+                      Analytics
+                    </NavLink>
                     <NavLink
                       to="/settings"
                       className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
@@ -280,62 +282,27 @@ const Nav = () => {
             </div>
 
             <div className="flex flex-col divide-y divide-gray-100">
-              {user ? (
-                <>
-                  <NavLink
-                    to="/dashboard"
-                    className="px-4 py-3 hover:bg-gray-50 font-medium text-gray-700"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    Dashboard
-                  </NavLink>
-                  <NavLink
-                    to="/interview_history"
-                    className="px-4 py-3 hover:bg-gray-50 font-medium text-gray-700"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    Interview History
-                  </NavLink>
-                  <NavLink
-                    to="/analytics"
-                    className="px-4 py-3 hover:bg-gray-50 font-medium text-gray-700"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    Analytics
-                  </NavLink>
-                  <NavLink
-                    to="/billing"
-                    className="px-4 py-3 hover:bg-gray-50 font-medium text-gray-700"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    Billing
-                  </NavLink>
-                  <NavLink
-                    to="/settings"
-                    className="px-4 py-3 hover:bg-gray-50 font-medium text-gray-700"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    Settings
-                  </NavLink>
-                </>
-              ) : (
-                <>
-                  <NavLink
-                    to="/"
-                    className="px-4 py-3 hover:bg-gray-50 font-medium text-gray-700"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    Home
-                  </NavLink>
-                  <NavLink
-                    to="/about"
-                    className="px-4 py-3 hover:bg-gray-50 font-medium text-gray-700"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    About
-                  </NavLink>
-                </>
-              )}
+              <NavLink
+                to="/"
+                className="px-4 py-3 hover:bg-gray-50 font-medium text-gray-700"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Home
+              </NavLink>
+              <NavLink
+                to="/about"
+                className="px-4 py-3 hover:bg-gray-50 font-medium text-gray-700"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                About
+              </NavLink>
+              <NavLink
+                to="/billing"
+                className="px-4 py-3 hover:bg-gray-50 font-medium text-gray-700"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Billing
+              </NavLink>
             </div>
 
             {user && (
@@ -374,6 +341,27 @@ const Nav = () => {
                 </div>
               </div>
               <div className="space-y-2">
+                <NavLink
+                  to="/dashboard"
+                  className="block px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg"
+                  onClick={() => setIsDropdownOpen(false)}
+                >
+                  Dashboard
+                </NavLink>
+                <NavLink
+                  to="/interview-history"
+                  className="block px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg"
+                  onClick={() => setIsDropdownOpen(false)}
+                >
+                  Interview History
+                </NavLink>
+                <NavLink
+                  to="/analytics"
+                  className="block px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg"
+                  onClick={() => setIsDropdownOpen(false)}
+                >
+                  Analytics
+                </NavLink>
                 <NavLink
                   to="/settings"
                   className="block px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg"
