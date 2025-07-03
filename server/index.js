@@ -6,6 +6,7 @@ import cookieParser from 'cookie-parser';
 import passport from './controllers/auth.js';
 import authRoutes from './routes/auth.js';
 import emailRoutes from './routes/email.js';
+import userRoutes from './routes/user.js';
 import connectDbB from './config/db.js';
 
 import fs from 'fs/promises';
@@ -59,6 +60,7 @@ const upload = multer({ dest: path.join(__dirname, 'uploads') });
 
 app.use('/auth', authRoutes);
 app.use('/mail', emailRoutes);
+app.use('/user', userRoutes);
 app.post('/upload-resume', upload.single('resume'), async (req, res) => {
     try {
         const buffer = await fs.readFile(req.file.path);

@@ -98,6 +98,8 @@ const SignUpModal = ({ isOpen, onClose, onSwitchToSignIn }) => {
       );
 
       const data = res.data;
+
+      console.log(data);
       setUser(data.user);
 
       // Close modal and navigate to user type selection for new users
