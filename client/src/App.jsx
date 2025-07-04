@@ -57,7 +57,7 @@ function App() {
           <Route path="/interview" element={<InterviewPage />} />
           <Route path="/interview-history" element={<InterviewHistory />} />
           <Route
-            path="/interview-session-details"
+            path="/interview-session-details/:id"
             element={<InterviewSessionDetails />}
           />
           <Route path="/analytics" element={<Analytics />} />

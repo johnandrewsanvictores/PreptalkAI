@@ -28,14 +28,25 @@ ChartJS.register(
 
 
 export default function Analytics() {
-  const [filter, setFilter] = useState("Last 30 Days");
+  const filterOptions = [
+    { label: "Last 7 Days", days: 7 },
+    { label: "Last 30 Days", days: 30 },
+    { label: "All Time", days: null },
+  ];
+
+  const [filter, setFilter] = useState(filterOptions[1].label); // default "Last 30 Days"
   const [selectedInterview, setSelectedInterview] = useState("behavioral");
   const [analyticsData, setAnalyticsData] = useState(null);
 
+  // Fetch analytics whenever the filter changes
   useEffect(() => {
     const fetchAnalytics = async () => {
       try {
-        const { data } = await api.get("/analytics");
+        const selected = filterOptions.find((o) => o.label === filter);
+        const params = {};
+        if (selected?.days) params.range = selected.days; // backend will interpret range in days
+
+        const { data } = await api.get("/analytics", { params });
         setAnalyticsData(data);
       } catch (err) {
         console.error("Failed to load analytics", err);
@@ -43,38 +54,17 @@ export default function Analytics() {
     };
 
     fetchAnalytics();
-  }, []);
+  }, [filter]);
 
-  const handleExport = () => {
-    alert(`Exporting analytics data for ${filter}`);
-  };
+  // Export feature removed
 
-  // Default/fallback chart
-  const defaultChartData = {
-    labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
-    datasets: [
-      {
-        label: 'Interview Score',
-        data: [65, 72, 80, 84],
-        borderColor: '#3b82f6', // blue-500
-        backgroundColor: 'rgba(59, 130, 246, 0.2)',
-        tension: 0.3,
-        fill: true,
-        pointBackgroundColor: '#3b82f6',
-        pointBorderColor: '#fff',
-        pointHoverRadius: 6,
-        pointHoverBorderWidth: 2,
-      }
-    ]
-  };
-
-  const chartData = analyticsData
+  const chartData = analyticsData && analyticsData.chart
     ? {
         labels: analyticsData.chart.labels,
         datasets: [
           {
             label: 'Interview Score',
-            data: analyticsData.chart.data,
+            data: analyticsData.chart.data.map((v) => v / 10),
             borderColor: '#3b82f6',
             backgroundColor: 'rgba(59, 130, 246, 0.2)',
             tension: 0.3,
@@ -86,9 +76,9 @@ export default function Analytics() {
           },
         ],
       }
-    : defaultChartData;
+    : { labels: [], datasets: [] };
 
-  // Options for the line chart
+  // Options for the line chart (0‒10 scale)
   const chartOptions = {
     responsive: true,
     maintainAspectRatio: false,
@@ -110,7 +100,7 @@ export default function Analytics() {
         usePointStyle: true,
         callbacks: {
           label: function (context) {
-            return `${context.dataset.label}: ${context.parsed.y}%`;
+            return `${context.dataset.label}: ${context.parsed.y}`;
           },
         },
       },
@@ -119,12 +109,9 @@ export default function Analytics() {
       y: {
         beginAtZero: false,
         min: 0,
-        max: 100,
+        max: 10,
         ticks: {
-          stepSize: 10,
-          callback: function (value) {
-            return value + '%';
-          },
+          stepSize: 1,
         },
         grid: {
           color: 'rgba(0, 0, 0, 0.05)',
@@ -141,35 +128,14 @@ export default function Analytics() {
     },
   };
 
-  // Default stats
-  const defaultStats = [
-    {
-      label: "Avg Score",
-      value: "84%",
-      icon: faBullseye,
-      color: "text-blue-600",
-    },
-    {
-      label: "Total Practice Interview",
-      value: 23,
-      icon: faChartBar,
-      color: "text-green-600",
-    },
-    {
-      label: "Practice Time",
-      value: "12H",
-      icon: faClock,
-      color: "text-blue-600",
-    },
-    {
-      label: "Day Streak",
-      value: 4,
-      icon: faFire,
-      color: "text-orange-600",
-    },
-  ];
-
   const hasBackendData = analyticsData && Array.isArray(analyticsData.stats) && analyticsData.stats.length > 0;
+
+  const emptyStats = [
+    { label: 'Avg Score', value: '0%', icon: faBullseye, color: 'text-blue-600' },
+    { label: 'Total Practice Interview', value: 0, icon: faChartBar, color: 'text-green-600' },
+    { label: 'Practice Time', value: '0H', icon: faClock, color: 'text-blue-600' },
+    { label: 'Day Streak', value: 0, icon: faFire, color: 'text-orange-600' },
+  ];
 
   const stats = hasBackendData
     ? analyticsData.stats.map((s) => ({
@@ -191,7 +157,7 @@ export default function Analytics() {
             ? 'text-blue-600'
             : 'text-orange-600',
       }))
-    : defaultStats;
+    : emptyStats;
 
   const defaultSkillsMap = {
     behavioral: [
@@ -288,29 +254,27 @@ export default function Analytics() {
   const defaultInterviewTypes = [
     { name: "Technical", score: 0, sessions: 0, color: "bg-blue-100" },
     { name: "Behavioral", score: 0, sessions: 0, color: "bg-green-100" },
-    { name: "Design", score: 0, sessions: 0, color: "bg-yellow-100" },
-    { name: "Adaptability", score: 0, sessions: 0, color: "bg-orange-100" },
+    { name: "Situational", score: 0, sessions: 0, color: "bg-yellow-100" },
+    { name: "All-in-one", score: 0, sessions: 0, color: "bg-orange-100" },
   ];
 
-  const interviewTypes = analyticsData?.interviewTypes ?? defaultInterviewTypes;
+  const interviewTypes =
+    analyticsData?.interviewTypes?.length === 4
+      ? analyticsData.interviewTypes
+      : defaultInterviewTypes;
 
   // Default recommendations
   const defaultRecommendations = [
-    {
-      title: "Focus Area",
-      color: "bg-yellow-50",
-      content:
-        "Work on strengthening your answer explanations. Consider providing more structure and context to improve clarity.",
-    },
-    {
-      title: "Strength",
-      color: "bg-green-50",
-      content:
-        "Your communication is balanced. Maintain clear communication while adding concise examples to support your points.",
-    },
+    { title: "Focus Area", color: "bg-yellow-50", content: "No data yet." },
+    { title: "Strength", color: "bg-green-50", content: "No data yet." },
+    { title: "Next Goal", color: "bg-blue-50", content: "No data yet." },
+    { title: "Consistency", color: "bg-orange-50", content: "No data yet." },
   ];
 
-  const recommendations = analyticsData?.recommendations ?? defaultRecommendations;
+  const recommendations =
+    analyticsData?.recommendations?.length === 4
+      ? analyticsData.recommendations
+      : defaultRecommendations;
 
   return (
     <PublicLayout>
@@ -328,19 +292,13 @@ export default function Analytics() {
                   onChange={(e) => setFilter(e.target.value)}
                   className="border border-gray-300 rounded-lg px-4 py-3 text-h6 focus:outline-none focus:ring-2 focus:ring-primary/20"
                 >
-                  {["Last 7 Days", "Last 30 Days", "All Time"].map((opt) => (
-                    <option key={opt} value={opt}>
-                      {opt}
+                  {filterOptions.map((opt) => (
+                    <option key={opt.label} value={opt.label}>
+                      {opt.label}
                     </option>
                   ))}
                 </select>
-                <button
-                  onClick={handleExport}
-                  className="flex items-center gap-3 bg-primary text-white px-6 py-3 rounded-lg text-h6 shadow hover:bg-primary/90 transition"
-                >
-                  <FontAwesomeIcon icon={faDownload} />
-                  Export
-                </button>
+                {/* Export button removed */}
               </div>
             </div>
 
@@ -446,6 +404,11 @@ export default function Analytics() {
                 ))}
               </div>
             </div>
+
+            {/* Personalized Recommendation section */}
+            <h3 className="text-h6 sm:text-h5 font-semibold text-headingText mb-4 sm:mb-6">
+              Personalized Recommendation
+            </h3>
 
             <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2 mb-12">
               {recommendations.map((rec) => (
