@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import QuitInterviewModal from "../components/modals/quitInterviewModal.jsx";
 import FinishInterviewModal from "../components/modals/finishInterviewModal.jsx";
@@ -15,7 +15,7 @@ import {
 export default function InterviewPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const userVideoRef = useRef(null);
+  const videoRef = useRef(null);
   const [error, setError] = useState("");
   const [stream, setStream] = useState(null);
 
@@ -44,7 +44,6 @@ export default function InterviewPage() {
     disconnect: didDisconnect,
     setPresenter: didSetPresenter,
     videoRef: didVideoRef,
-    retryVideoConnection: didRetryVideo,
     clearError: clearDIDError,
   } = useDIDStreaming();
 
@@ -96,89 +95,53 @@ export default function InterviewPage() {
   const [speechTimer, setSpeechTimer] = useState(null);
   const [questionTimer, setQuestionTimer] = useState(null);
   const [countdown, setCountdown] = useState(0);
-  const [fallbackMode, setFallbackMode] = useState(false);
 
-  // Handle interview completion
-  const handleInterviewComplete = useCallback(async () => {
-    console.log("🎬 Interview completed, cleaning up...");
+  // Auto-progression logic with speech synchronization
+  useEffect(() => {
+    if (!isPracticeReady && !(isRealReady && isRealInterviewStarted)) return;
+    if (currentQuestion >= questions.length) return;
 
-    try {
-      // Close D-ID connection properly
-      console.log("🔌 Closing D-ID connection...");
-      await didDisconnect();
-      console.log("✅ D-ID connection closed");
-    } catch (error) {
-      console.error("❌ Error closing D-ID connection:", error);
-    }
+    const currentQuestionText = questions[currentQuestion];
+    if (!currentQuestionText) return;
 
-    // Stop camera
-    if (stream) {
-      console.log("📹 Stopping camera stream...");
-      stream.getTracks().forEach((track) => {
-        track.stop();
-        console.log(`🔴 Stopped ${track.kind} track`);
-      });
-      setStream(null);
-      console.log("✅ Camera stream stopped");
-    }
+    console.log(
+      `🎯 Starting question ${currentQuestion + 1}/${questions.length}`
+    );
 
-    // Clear any ongoing timers
-    if (speechTimer) {
-      clearTimeout(speechTimer);
-      setSpeechTimer(null);
-    }
-    if (questionTimer) {
-      clearTimeout(questionTimer);
-      setQuestionTimer(null);
-    }
-
-    // Reset states
-    setIsSpeaking(false);
-    setIsTyping(false);
+    // Reset countdown
     setCountdown(0);
 
-    // Show completion modal
-    console.log("🎉 Interview complete - showing finish modal");
-    setShowFinishModal(true);
-  }, [didDisconnect, stream, speechTimer, questionTimer]);
+    // Start typing animation immediately
+    setIsTyping(true);
+    setDisplayedText("");
+    setIsSpeaking(true);
 
-  // Function to start a question with perfect sync
-  const startQuestion = useCallback(
-    async (questionIndex) => {
-      if (questionIndex >= questions.length) {
-        console.log(`🏁 All questions completed, closing connection`);
-        handleInterviewComplete();
-        return;
+    let index = 0;
+    const typeInterval = setInterval(() => {
+      if (index < currentQuestionText.length) {
+        setDisplayedText((prev) => currentQuestionText.slice(0, index + 1));
+        index++;
+      } else {
+        setIsTyping(false);
+        clearInterval(typeInterval);
       }
+    }, 50);
 
-      const currentQuestionText = questions[questionIndex];
-      if (!currentQuestionText) return;
-
+    // Start speech immediately with typing
+    if (didStreamReady && currentQuestionText) {
       console.log(
-        `🎯 Starting question ${questionIndex + 1}/${questions.length}`
+        `🗣️ Agent speaking question ${currentQuestion + 1}:`,
+        currentQuestionText
       );
-
-      // Reset states
-      setCurrentQuestion(questionIndex);
-      setCountdown(0);
-      setDisplayedText("");
-      setIsTyping(true);
-      setIsSpeaking(true);
-
-      // Track completion of both typing and speech
-      let typingComplete = false;
-      let speechComplete = false;
-      let speechAttempted = false;
-
-      const checkBothComplete = () => {
-        if (typingComplete && speechComplete) {
+      didSpeak(currentQuestionText, voiceId)
+        .then(() => {
           console.log(
-            `✅ Both typing and speech completed for question ${
-              questionIndex + 1
-            }`
+            `✅ Speech completed for question ${currentQuestion + 1}`
           );
-          // Start countdown for next question
-          if (questionIndex < questions.length - 1) {
+          setIsSpeaking(false);
+
+          // Start countdown and wait 10 seconds after speech ends before next question
+          if (currentQuestion < questions.length - 1) {
             setCountdown(10);
 
             // Countdown timer
@@ -186,170 +149,68 @@ export default function InterviewPage() {
               setCountdown((prev) => {
                 if (prev <= 1) {
                   clearInterval(countdownInterval);
-                  // Start next question immediately when countdown reaches 0
-                  setTimeout(() => startQuestion(questionIndex + 1), 100);
                   return 0;
                 }
                 return prev - 1;
               });
             }, 1000);
+
+            // Move to next question after 10 seconds
+            const timer = setTimeout(() => {
+              console.log(`⏭️ Moving to next question after 10s delay`);
+              setCurrentQuestion((prev) => prev + 1);
+              clearInterval(countdownInterval);
+            }, 10000); // 10 seconds
+
+            setQuestionTimer(timer);
           } else {
-            // Last question completed
             console.log(`🏁 All questions completed, closing connection`);
             handleInterviewComplete();
           }
-        }
-      };
-
-      // Start typing animation
-      let index = 0;
-      const typeInterval = setInterval(() => {
-        if (index < currentQuestionText.length) {
-          setDisplayedText((prev) => currentQuestionText.slice(0, index + 1));
-          index++;
-        } else {
-          setIsTyping(false);
-          typingComplete = true;
-          clearInterval(typeInterval);
-          console.log(`✍️ Typing completed for question ${questionIndex + 1}`);
-          checkBothComplete();
-        }
-      }, 50);
-
-      // Function to attempt speech with retry
-      const attemptSpeech = async (retryCount = 0) => {
-        if (speechAttempted && speechComplete) return; // Prevent duplicate attempts
-
-        speechAttempted = true;
-        const maxRetries = 2;
-
-        try {
-          // Check if we're in fallback mode or should enable it
-          if (fallbackMode) {
-            console.log("📖 Fallback mode: Text-only interview");
-            setIsSpeaking(false);
-            speechComplete = true;
-            checkBothComplete();
-            return;
-          }
-
-          // Wait for stream to be ready if it's not yet ready
-          if (!didStreamReady) {
-            console.log("⏳ Waiting for stream to be ready...");
-            // Wait up to 5 seconds for stream to be ready
-            let waitTime = 0;
-            while (!didStreamReady && waitTime < 5000) {
-              await new Promise((resolve) => setTimeout(resolve, 100));
-              waitTime += 100;
-            }
-          }
-
-          if (didStreamReady) {
-            console.log(
-              `🗣️ Agent speaking question ${questionIndex + 1} (attempt ${
-                retryCount + 1
-              }):`,
-              currentQuestionText
-            );
-
-            const result = await didSpeak(currentQuestionText, voiceId);
-
-            if (result) {
-              console.log(
-                `✅ Speech completed for question ${questionIndex + 1}`
-              );
-              setIsSpeaking(false);
-              speechComplete = true;
-              checkBothComplete();
-            } else {
-              throw new Error("Speech failed");
-            }
-          } else {
-            console.warn(
-              "❌ Stream not ready after waiting, enabling fallback mode"
-            );
-            setFallbackMode(true);
-            setIsSpeaking(false);
-            speechComplete = true;
-            checkBothComplete();
-          }
-        } catch (error) {
+        })
+        .catch((error) => {
           console.error(
-            `❌ Speech failed for question ${questionIndex + 1} (attempt ${
-              retryCount + 1
-            }):`,
+            `❌ Speech failed for question ${currentQuestion + 1}:`,
             error
           );
-
-          // Check if it's a payment error (402)
-          if (
-            error.message &&
-            (error.message.includes("402") ||
-              error.message.includes("Payment Required") ||
-              error.message.includes("Failed to create talk"))
-          ) {
-            console.warn(
-              "💳 D-ID credits exhausted or stream error - enabling fallback mode"
-            );
-            setFallbackMode(true);
-            setIsSpeaking(false);
-            speechComplete = true;
-            checkBothComplete();
-            return;
-          }
-
-          // Retry logic
-          if (retryCount < maxRetries && !fallbackMode) {
-            console.log(
-              `🔄 Retrying speech for question ${questionIndex + 1}...`
-            );
-            // Wait a bit before retrying
-            await new Promise((resolve) => setTimeout(resolve, 1000));
-            // Reset the attempted flag for retry
-            speechAttempted = false;
-            await attemptSpeech(retryCount + 1);
-          } else {
-            console.warn(
-              `❌ Max retries reached for question ${
-                questionIndex + 1
-              }, enabling fallback mode`
-            );
-            setFallbackMode(true);
-            setIsSpeaking(false);
-            speechComplete = true;
-            checkBothComplete();
-          }
-        }
-      };
-
-      // Start speech attempt
-      attemptSpeech();
-    },
-    [
-      questions,
-      didStreamReady,
-      didSpeak,
-      voiceId,
-      handleInterviewComplete,
-      fallbackMode,
-    ]
-  );
-
-  // Auto-progression logic with perfect speech synchronization
-  useEffect(() => {
-    if (!isPracticeReady && !(isRealReady && isRealInterviewStarted)) return;
-
-    // Start the first question immediately
-    if (currentQuestion === 0) {
-      startQuestion(0);
+          setIsSpeaking(false);
+        });
     }
+
+    return () => {
+      clearInterval(typeInterval);
+      if (questionTimer) {
+        clearTimeout(questionTimer);
+        setQuestionTimer(null);
+      }
+    };
   }, [
+    currentQuestion,
     isPracticeReady,
     isRealReady,
     isRealInterviewStarted,
-    currentQuestion,
-    startQuestion,
+    didStreamReady,
+    didSpeak,
+    voiceId,
+    questions,
   ]);
+
+  // Handle interview completion
+  const handleInterviewComplete = () => {
+    console.log("🎬 Interview completed, cleaning up...");
+
+    // Close D-ID connection
+    didDisconnect();
+
+    // Show completion modal or redirect
+    setShowFinishModal(true);
+
+    // Stop camera
+    if (stream) {
+      stream.getTracks().forEach((track) => track.stop());
+      setStream(null);
+    }
+  };
 
   // Clean up timers on unmount
   useEffect(() => {
@@ -446,25 +307,22 @@ export default function InterviewPage() {
   useEffect(() => {
     const checkLoadingComplete = () => {
       console.log("🔍 Checking loading status:", {
-        didConnected,
         didStreamReady,
         questionsLoaded,
         questionsLength: questions.length,
         isPageLoading,
       });
 
-      // Allow start when D-ID is connected (not just stream ready) and questions are loaded
-      if (didConnected && questionsLoaded && questions.length > 0) {
+      if (didStreamReady && questionsLoaded && questions.length > 0) {
         console.log(
-          "✅ Page loading complete - D-ID connected and questions loaded"
+          "✅ Page loading complete - D-ID ready and questions loaded"
         );
         setTimeout(() => {
           console.log("🎯 Setting isPageLoading to false");
           setIsPageLoading(false);
-        }, 500); // Reduced delay for faster response
+        }, 1000); // Small delay for smooth transition
       } else {
         console.log("⏳ Still loading:", {
-          needsConnection: !didConnected,
           needsStreamReady: !didStreamReady,
           needsQuestions: !questionsLoaded || questions.length === 0,
         });
@@ -472,93 +330,26 @@ export default function InterviewPage() {
     };
 
     checkLoadingComplete();
-  }, [didConnected, didStreamReady, questionsLoaded, questions.length]);
+  }, [didStreamReady, questionsLoaded, questions.length]);
 
   useEffect(() => {
     let initialStream;
-
-    const setupCamera = async () => {
-      try {
-        console.log("📹 Setting up camera...");
-
-        // First check if camera permissions are available
-        const permissions = await navigator.permissions
-          .query({ name: "camera" })
-          .catch(() => null);
-        if (permissions?.state === "denied") {
-          console.warn("⚠️ Camera permissions denied");
-          setError("Camera access denied. Please check your browser settings.");
-          return;
-        }
-
-        const constraints = {
-          video: {
-            width: { ideal: 1280, min: 640 },
-            height: { ideal: 720, min: 480 },
-            facingMode: "user",
-          },
-          audio: false, // Set to false since we're not recording audio
-        };
-
-        const s = await navigator.mediaDevices.getUserMedia(constraints);
-        console.log("✅ Camera stream obtained:", s);
-
+    navigator.mediaDevices
+      .getUserMedia({ video: true, audio: true })
+      .then((s) => {
         setError("");
         setStream(s);
         initialStream = s;
-
-        if (userVideoRef.current) {
-          userVideoRef.current.srcObject = s;
-          console.log("📺 Video element source set");
-
-          // Ensure video plays
-          try {
-            await userVideoRef.current.play();
-            console.log("▶️ User video playing");
-          } catch (playError) {
-            console.log(
-              "⚠️ Video play failed (this is often normal):",
-              playError
-            );
-          }
+        if (videoRef.current) {
+          videoRef.current.srcObject = s;
         }
-      } catch (err) {
-        console.error("❌ Camera setup failed:", err);
-
-        // Provide more specific error messages
-        let errorMessage = "Camera error: ";
-        if (
-          err.name === "NotFoundError" ||
-          err.name === "DevicesNotFoundError"
-        ) {
-          errorMessage =
-            "No camera found. Please ensure a camera is connected.";
-        } else if (
-          err.name === "NotAllowedError" ||
-          err.name === "PermissionDeniedError"
-        ) {
-          errorMessage =
-            "Camera access denied. Please allow camera permissions and refresh.";
-        } else if (
-          err.name === "NotReadableError" ||
-          err.name === "TrackStartError"
-        ) {
-          errorMessage = "Camera is in use by another application.";
-        } else if (err.name === "OverconstrainedError") {
-          errorMessage = "Camera doesn't support the requested settings.";
-        } else {
-          errorMessage += err.message || "Unknown error";
-        }
-
-        setError(errorMessage);
-      }
-    };
-
-    setupCamera();
+      })
+      .catch((err) => {
+        setError("Unable to access camera or microphone.");
+      });
 
     return () => {
       if (initialStream) {
-        console.log("🔄 Cleaning up camera stream");
         initialStream.getTracks().forEach((track) => track.stop());
       }
     };
@@ -797,23 +588,12 @@ export default function InterviewPage() {
 
       <div className="absolute top-6 right-6 z-10 w-[250px] h-[200px] bg-black rounded-lg overflow-hidden border-3 border-white shadow-xl">
         {error ? (
-          <div className="w-full h-full flex flex-col items-center justify-center bg-gray-800 p-4">
-            <span className="text-white text-3xl mb-2">📷</span>
-            <span className="text-white text-xs text-center mb-2">{error}</span>
-            <button
-              onClick={() => {
-                setError("");
-                // Retry camera setup
-                window.location.reload();
-              }}
-              className="px-3 py-1 bg-blue-500 text-white text-xs rounded hover:bg-blue-600"
-            >
-              Retry Camera
-            </button>
+          <div className="w-full h-full flex items-center justify-center bg-gray-800">
+            <span className="text-white text-sm">📷</span>
           </div>
         ) : (
           <video
-            ref={userVideoRef}
+            ref={videoRef}
             autoPlay
             playsInline
             muted
@@ -833,19 +613,6 @@ export default function InterviewPage() {
             >
               ✕
             </button>
-          </div>
-        </div>
-      )}
-
-      {/* Fallback Mode Indicator */}
-      {fallbackMode && (
-        <div className="absolute top-6 left-6 z-10 bg-orange-500 text-white px-4 py-2 rounded-lg shadow-lg">
-          <div className="flex items-center space-x-2">
-            <span className="text-lg">📖</span>
-            <div className="flex flex-col">
-              <span className="text-sm font-medium">Text-Only Mode</span>
-              <span className="text-xs opacity-90">AI credits exhausted</span>
-            </div>
           </div>
         </div>
       )}
@@ -880,43 +647,15 @@ export default function InterviewPage() {
               autoPlay
               playsInline
               className="w-[500px] h-auto object-contain"
-              onLoadedData={() => {
-                console.log("🎥 Video loaded with data");
-                // Ensure video starts playing immediately
-                if (didVideoRef.current) {
-                  didVideoRef.current.play().catch(console.warn);
-                }
-              }}
+              onLoadedData={() => console.log("🎥 Video loaded with data")}
               onPlay={() => console.log("▶️ Video started playing")}
-              onError={(e) => {
-                console.log("❌ Video error:", e);
-                // Try to retry connection on error
-                setTimeout(() => {
-                  console.log("🔄 Attempting video retry due to error...");
-                  didRetryVideo();
-                }, 2000);
-              }}
+              onError={(e) => console.log("❌ Video error:", e)}
               onCanPlay={() => {
                 // Ensure video can play with audio
                 if (didVideoRef.current) {
-                  console.log("🔊 Video can play - ensuring audio enabled");
+                  console.log("🔊 Video can play - removing muted if present");
                   didVideoRef.current.muted = false;
-                  didVideoRef.current.volume = 1.0;
                 }
-              }}
-              onLoadedMetadata={() => {
-                console.log("📊 Video metadata loaded - ready to play");
-                if (didVideoRef.current) {
-                  didVideoRef.current.play().catch(console.warn);
-                }
-              }}
-              onEmptied={() => {
-                console.log("⚠️ Video stream emptied - attempting retry...");
-                setTimeout(() => didRetryVideo(), 1000);
-              }}
-              onStalled={() => {
-                console.log("⚠️ Video stalled - attempting retry...");
-                setTimeout(() => didRetryVideo(), 2000);
               }}
             />
             {/* Connection indicator */}
@@ -930,62 +669,23 @@ export default function InterviewPage() {
               <div className="absolute top-4 right-4 w-4 h-4 bg-green-500 rounded-full border-2 border-white animate-pulse"></div>
             )}
             {/* Debug video info */}
-            <div className="absolute bottom-4 left-4 bg-black/70 text-white text-xs p-2 rounded max-w-[200px]">
-              <div>
-                Stream: {didVideoRef?.current?.srcObject ? "Active" : "None"}
-              </div>
-              <div>
-                Size: {didVideoRef?.current?.videoWidth}x
-                {didVideoRef?.current?.videoHeight}
-              </div>
-              <div>Ready: {didStreamReady ? "Yes" : "No"}</div>
-              <div>Connected: {didConnected ? "Yes" : "No"}</div>
-              <button
-                onClick={didRetryVideo}
-                className="mt-1 px-2 py-1 bg-blue-500 text-white text-xs rounded hover:bg-blue-600"
-              >
-                Retry Video
-              </button>
+            <div className="absolute bottom-4 left-4 bg-black/70 text-white text-xs p-2 rounded">
+              Video Stream:{" "}
+              {didVideoRef?.current?.srcObject ? "Active" : "None"}
+              <br />
+              Video Size: {didVideoRef?.current?.videoWidth}x
+              {didVideoRef?.current?.videoHeight}
             </div>
           </div>
         ) : (
           // Fallback to static image or placeholder with loading state
           <div className="relative">
             {interviewSettings?.selectedAgent?.img ? (
-              <div
-                className="relative w-[500px] h-auto"
-                style={{
-                  background: "transparent",
-                  isolation: "isolate",
-                }}
-              >
-                <img
-                  src={interviewSettings.selectedAgent.img}
-                  alt={interviewSettings.selectedAgent.name}
-                  className="w-full h-auto object-contain"
-                  style={{
-                    filter:
-                      "brightness(1.1) contrast(1.2) saturate(1.1) drop-shadow(0 4px 12px rgba(0,0,0,0.15))",
-                    mixBlendMode: "screen",
-                    background: "transparent",
-                    backgroundColor: "transparent",
-                    opacity: 0.95,
-                    // Advanced background removal for light backgrounds
-                    clipPath: "ellipse(45% 60% at center 45%)",
-                    transform: "scale(1.1)",
-                  }}
-                />
-                {/* Subtle glow effect to enhance blending */}
-                <div
-                  className="absolute inset-0 opacity-20"
-                  style={{
-                    background:
-                      "radial-gradient(ellipse 50% 70% at center 40%, rgba(255,255,255,0.3), transparent 60%)",
-                    mixBlendMode: "soft-light",
-                    pointerEvents: "none",
-                  }}
-                />
-              </div>
+              <img
+                src={interviewSettings.selectedAgent.img}
+                alt={interviewSettings.selectedAgent.name}
+                className="w-[500px] h-auto object-contain opacity-50"
+              />
             ) : (
               <div className="w-80 h-80 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center opacity-50">
                 <div className="text-white text-8xl">🤖</div>
@@ -1029,24 +729,29 @@ export default function InterviewPage() {
                   <button
                     onClick={async () => {
                       console.log("🎯 Practice Start button clicked");
+                      console.log("📊 Current state:", {
+                        didStreamReady,
+                        questionsLength: questions.length,
+                        voiceId,
+                        firstQuestion: questions[0]?.substring(0, 50) + "...",
+                      });
+
                       setIsPracticeReady(true);
-                      setCurrentQuestion(0);
-                      // startQuestion will be called by useEffect
+                      setCurrentQuestion(0); // Start with first question
+
+                      // Auto-progression will handle the rest via useEffect
                     }}
                     disabled={
-                      ((didConnecting || !didConnected) && !fallbackMode) ||
-                      questions.length === 0
+                      didConnecting || !didStreamReady || questions.length === 0
                     }
                     className="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {didConnecting
                       ? "Connecting..."
-                      : !didConnected && !fallbackMode
+                      : !didStreamReady
                       ? "Preparing AI..."
                       : questions.length === 0
                       ? "Loading Questions..."
-                      : fallbackMode
-                      ? "Yes (Text Only)"
                       : "Yes"}
                   </button>
                 ) : (
@@ -1072,11 +777,7 @@ export default function InterviewPage() {
                     {isSpeaking && (
                       <div className="flex items-center space-x-2 text-blue-600">
                         <div className="animate-pulse w-3 h-3 bg-blue-600 rounded-full"></div>
-                        <span className="text-sm">
-                          {fallbackMode
-                            ? "Displaying question..."
-                            : "Agent is speaking..."}
-                        </span>
+                        <span className="text-sm">Agent is speaking...</span>
                       </div>
                     )}
 
@@ -1137,23 +838,21 @@ export default function InterviewPage() {
                       console.log("🎯 Real Interview Start button clicked");
                       setIsRealReady(true);
                       setIsRealInterviewStarted(true);
-                      setCurrentQuestion(0);
-                      // startQuestion will be called by useEffect
+                      setCurrentQuestion(0); // Start with first question
+
+                      // Auto-progression will handle the rest via useEffect
                     }}
                     disabled={
-                      ((didConnecting || !didConnected) && !fallbackMode) ||
-                      questions.length === 0
+                      didConnecting || !didStreamReady || questions.length === 0
                     }
                     className="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {didConnecting
                       ? "Connecting..."
-                      : !didConnected && !fallbackMode
+                      : !didStreamReady
                       ? "Preparing AI..."
                       : questions.length === 0
                       ? "Loading Questions..."
-                      : fallbackMode
-                      ? "Start (Text Only)"
                       : "Start"}
                   </button>
                 </div>
@@ -1181,11 +880,7 @@ export default function InterviewPage() {
                     {isSpeaking && (
                       <div className="flex items-center space-x-2 text-red-600">
                         <div className="animate-pulse w-3 h-3 bg-red-600 rounded-full"></div>
-                        <span className="text-sm">
-                          {fallbackMode
-                            ? "Displaying question..."
-                            : "Agent is speaking..."}
-                        </span>
+                        <span className="text-sm">Agent is speaking...</span>
                       </div>
                     )}
 
