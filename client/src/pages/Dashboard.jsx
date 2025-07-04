@@ -168,14 +168,16 @@ const Dashboard = () => {
                 Areas of Improvement
               </p>
               {dashboardData?.areasOfImprovement?.length ? (
-                dashboardData.areasOfImprovement.map((area, idx) => (
-                  <div
-                    key={idx}
-                    className="cardContainer bg-brown bg-opacity-[.28] border-brown border-[1.5px] rounded-xl p-4 pb-8"
-                  >
-                    <p className="text-p">{area}</p>
-                  </div>
-                ))
+                <div className="space-y-4 mt-4">
+                  {dashboardData.areasOfImprovement.map((area, idx) => (
+                    <div
+                      key={idx}
+                      className="cardContainer bg-brown bg-opacity-[.28] border-brown border-[1.5px] rounded-xl p-4"
+                    >
+                      <p className="text-p">{area}</p>
+                    </div>
+                  ))}
+                </div>
               ) : (
                 <p className="text-subHeadingText">No improvement areas yet.</p>
               )}
