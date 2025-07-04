@@ -10,9 +10,23 @@ module.exports = {
         headingText: "#1A2A42",
         subHeadingText: "#4F5D75",
         primary: "#2F80ED",
-        red: "#DE5656",
-        green: "#52E081",
-        brown: "#DDAE86",
+        brandRed: "#DE5656",
+        brandGreen: "#52E081",
+        brandBrown: "#DDAE86",
+
+        // Provide aliases so existing class names like bg-green or text-red still work
+        green: {
+          DEFAULT: "#52E081",
+        },
+        red: {
+          DEFAULT: "#DE5656",
+        },
+        yellow: {
+          DEFAULT: "#FACC15", 
+        },
+        brown: {
+          DEFAULT: "#DDAE86",
+        },
       },
       fontSize: {
         h1: "3.815rem",

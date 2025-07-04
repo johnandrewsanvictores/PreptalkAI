@@ -12,6 +12,7 @@ import dashboardRoutes from './routes/dashboard.js';
 import analyticsRoutes from './routes/analytics.js';
 import historyRoutes from './routes/history.js';
 import businessRoutes from './routes/business.js';
+import sessionsRoutes from './routes/sessions.js';
 
 import fs from 'fs/promises';
 import path from 'path';
@@ -69,6 +70,7 @@ app.use('/analytics', analyticsRoutes);
 app.use('/history', historyRoutes);
 app.use('/user', userRoutes);
 app.use('/business', businessRoutes);
+app.use('/sessions', sessionsRoutes);
 app.post('/upload-resume', upload.single('resume'), async (req, res) => {
     try {
         const buffer = await fs.readFile(req.file.path);
