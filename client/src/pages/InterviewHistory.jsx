@@ -10,24 +10,14 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import api from "../../axious.js";
 
-const defaultStats = [
-  {
-    label: "Total Session",
-    value: 5,
-    icon: faCalendarAlt,
-    color: "text-blue-600",
-  },
-  { label: "Avg Score", value: "85%", icon: faStar, color: "text-green-600" },
-  { label: "Total Time", value: "12H", icon: faClock, color: "text-blue-600" },
-  {
-    label: "Questions",
-    value: 31,
-    icon: faQuestionCircle,
-    color: "text-orange-600",
-  },
-];
-
 const defaultSessions = [];
+
+const emptyStats = [
+  { label: "Total Session", value: 0, icon: faCalendarAlt, color: "text-blue-600" },
+  { label: "Avg Score", value: "0%", icon: faStar, color: "text-green-600" },
+  { label: "Total Time", value: "0H", icon: faClock, color: "text-blue-600" },
+  { label: "Questions", value: 0, icon: faQuestionCircle, color: "text-orange-600" },
+];
 
 export default function InterviewHistory() {
   const navigate = useNavigate();
@@ -47,7 +37,7 @@ export default function InterviewHistory() {
     fetchHistory();
   }, []);
 
-  const statsRaw = historyData?.stats ?? defaultStats;
+  const statsRaw = historyData?.stats?.length ? historyData.stats : emptyStats;
 
   const stats = statsRaw.map((s) => {
     if (s.icon) return s; // if already has icon
@@ -77,7 +67,7 @@ export default function InterviewHistory() {
 
   const handleViewDetails = (sessionIndex) => {
     const selectedSession = sessions[sessionIndex];
-    navigate("/interview-session-details", {
+    navigate(`/interview-session-details/${selectedSession.id}`, {
       state: {
         sessionTitle: selectedSession.title,
         sessionDate: selectedSession.date,
@@ -101,28 +91,28 @@ export default function InterviewHistory() {
             </p>
 
             <div className="grid grid-cols-2 gap-4 sm:gap-6 md:grid-cols-4 mb-4">
-              {stats.map((stat) => (
-                <div
-                  key={stat.label}
-                  className="bg-bgColor2 rounded-xl shadow-lg flex items-center justify-between py-6 sm:py-8 px-4 sm:px-6"
-                >
-                  <div className="flex flex-col">
-                    <div className="text-h4 sm:text-h3 font-bold text-headingText">
-                      {stat.value}
+                {stats.map((stat) => (
+                  <div
+                    key={stat.label}
+                    className="bg-bgColor2 rounded-xl shadow-lg flex items-center justify-between py-6 sm:py-8 px-4 sm:px-6"
+                  >
+                    <div className="flex flex-col">
+                      <div className="text-h4 sm:text-h3 font-bold text-headingText">
+                        {stat.value}
+                      </div>
+                      <div className="text-small text-subHeadingText mt-1">
+                        {stat.label}
+                      </div>
                     </div>
-                    <div className="text-small text-subHeadingText mt-1">
-                      {stat.label}
+                    <div className={`text-4xl sm:text-5xl ${stat.color}`}>
+                      <FontAwesomeIcon icon={stat.icon} />
                     </div>
                   </div>
-                  <div className={`text-4xl sm:text-5xl ${stat.color}`}>
-                    <FontAwesomeIcon icon={stat.icon} />
-                  </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
 
             {!historyData && (
-              <p className="text-center text-subHeadingText mb-8">No data yet.</p>
+              <p className="text-center text-subHeadingText mb-8"></p>
             )}
 
             <div className="bg-bgColor2 rounded-xl shadow-lg p-8">
