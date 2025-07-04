@@ -3,6 +3,7 @@ import logo from "../../assets/PrepTalkAIlogo.png";
 import axios from "axios";
 import api from "../../../axious.js";
 import { useNavigate } from "react-router-dom";
+import { showSuccess } from "../../utils/alertHelper.js";
 
 const UploadResumeModal = ({ isOpen, onClose, onSkip, onUpload }) => {
   const [dragActive, setDragActive] = useState(false);
@@ -135,10 +136,16 @@ ${rawText}
       const formatted = pollRes.data;
 
       setFormattedText({ formatted });
+
+      // ✅ Show success toast
+      showSuccess("Resume analyzed successfully!", "Success!");
+
+      // Close modal after showing success (toast auto-closes)
+      onUpload?.();
       resetModal?.();
+
       console.log(formattedText);
       navigate("/settings", { state: { formattedText: formatted } });
-
     } catch (err) {
       console.error("Upload/Format failed:", err);
       setError("Failed to upload and process resume. Please try again.");
@@ -155,7 +162,11 @@ ${rawText}
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
   };
 
-  if (!isOpen) return null;
+  if (!isOpen) {
+    console.log("Modal not open");
+    return null;
+  }
+  console.log("Modal open");
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">

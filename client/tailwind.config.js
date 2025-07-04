@@ -1,10 +1,7 @@
 // tailwind.config.js
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: [
-    "./index.html",
-    "./src/**/*.{js,jsx,ts,tsx}",
-  ],
+  content: ["./index.html", "./src/**/*.{js,jsx,ts,tsx}"],
   theme: {
     extend: {
       colors: {
@@ -28,9 +25,54 @@ module.exports = {
         small: "0.8rem",
       },
       fontFamily: {
-        nunito: ['"Nunito"', 'sans-serif'],
+        nunito: ['"Nunito"', "sans-serif"],
+      },
+      animation: {
+        "fade-in-up": "fadeInUp 0.7s ease-out forwards",
+        "bounce-slow": "bounce 2s infinite",
+        blob: "blob 7s infinite",
+      },
+      keyframes: {
+        fadeInUp: {
+          "0%": {
+            opacity: "0",
+            transform: "translateY(30px)",
+          },
+          "100%": {
+            opacity: "1",
+            transform: "translateY(0)",
+          },
+        },
+        blob: {
+          "0%": {
+            transform: "translate(0px, 0px) scale(1)",
+          },
+          "33%": {
+            transform: "translate(30px, -50px) scale(1.1)",
+          },
+          "66%": {
+            transform: "translate(-20px, 20px) scale(0.9)",
+          },
+          "100%": {
+            transform: "translate(0px, 0px) scale(1)",
+          },
+        },
+      },
+      animationDelay: {
+        200: "200ms",
+        400: "400ms",
+        1000: "1000ms",
+        2000: "2000ms",
+        4000: "4000ms",
       },
     },
   },
   plugins: [require("tailwindcss-animate")],
-}
+  safelist: [
+    "animation-delay-200",
+    "animation-delay-400",
+    "animation-delay-1000",
+    "animation-delay-2000",
+    "animation-delay-4000",
+  ],
+};

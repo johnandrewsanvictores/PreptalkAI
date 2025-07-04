@@ -22,11 +22,10 @@ const DecideTypeofUserPage = () => {
       const response = await api.put(
         "/auth/updateUser",
         {
-          _id: user.userId,
+          _id: user._id,
           isFirstVisit: false,
           userType: "freelancer",
-        },
-        { withCredentials: true }
+        }
       );
 
       if (response.status === 200) {
@@ -51,11 +50,10 @@ const DecideTypeofUserPage = () => {
       const response = await api.put(
         "/auth/updateUser",
         {
-          _id: user.userId,
+          _id: user._id,
           isFirstVisit: false,
           userType: "entrep",
-        },
-        { withCredentials: true }
+        }
       );
 
       if (response.status === 200) {
