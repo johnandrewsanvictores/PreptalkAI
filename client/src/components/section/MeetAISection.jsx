@@ -12,42 +12,42 @@ const MeetAISection = () => {
       name: "Brandon",
       image: BrandonImage,
       description:
-        "Expert in technical interviews for software engineering roles. Specializes in coding challenges and system design.",
+        "A confident and assertive presence, Brandon speaks with clarity and authority. He carries a formal, professional demeanor that reflects leadership and control.",
     },
     {
       id: 2,
       name: "Davis",
       image: DavisImage,
       description:
-        "Focuses on behavioral interviews and leadership assessments. Perfect for management and executive positions.",
+        "Davis is direct, disciplined, and serious. He has a commanding presence and values precision, making him feel like a veteran in high-pressure environments.",
     },
     {
       id: 3,
       name: "Harvey",
       image: HarveyImage,
       description:
-        "Specializes in marketing and creative role interviews. Expert in portfolio reviews and creative problem-solving.",
+        "Calm and detached, Harvey maintains a neutral expression and flat tone. His passive presence makes him hard to read—reserved, observant, and composed.",
     },
     {
       id: 4,
       name: "Sara",
       image: SaraImage,
       description:
-        "Finance and consulting interview specialist. Covers case studies, analytical thinking, and quantitative reasoning.",
+        "Sara is poised, focused, and respectful. She brings a quiet intensity and thoughtful presence that reflects experience, maturity, and high standards.",
     },
     {
       id: 5,
       name: "Rosa",
       image: RosaImage,
       description:
-        "Healthcare and medical field expert. Experienced in clinical scenarios and healthcare management interviews.",
+        "Warm, constructive, and insightful—Rosa offers a balanced mix of kindness and professionalism. She’s the type who inspires confidence with her calm and thoughtful personality.",
     },
     {
       id: 6,
       name: "Rona",
       image: RonaImage,
       description:
-        "Sales and business development specialist. Masters relationship building and performance-based interview techniques.",
+        "Friendly, upbeat, and approachable, Rona brings positive energy to every interaction. She creates a welcoming atmosphere and naturally puts people at ease.",
     },
   ];
 
