@@ -85,19 +85,24 @@ const Billing = () => {
               </p>
             </div>
 
-            <div className="bg-bgColor2 rounded-xl p-8 mb-8">
-              <h2 className="text-h5 font-semibold text-headingText mb-4">
-                Current Balance
-              </h2>
-              <div className="flex items-center gap-4">
-                <span className="text-h2 font-bold text-primary">
-                  120 Credits
-                </span>
-                <span className="text-h6 text-subHeadingText">
-                  Enough for 120 interview session
-                </span>
-              </div>
-            </div>
+            {/* if user is freelancer or micro-entrepreneur */}
+            {user &&
+              (user.userType === "freelancer" ||
+                user.userType === "entrep") && (
+                <div className="bg-bgColor2 rounded-xl p-8 mb-8">
+                  <h2 className="text-h5 font-semibold text-headingText mb-4">
+                    Current Balance
+                  </h2>
+                  <div className="flex items-center gap-4">
+                    <span className="text-h2 font-bold text-primary">
+                      120 Credits
+                    </span>
+                    <span className="text-h6 text-subHeadingText">
+                      Enough for 120 interview session
+                    </span>
+                  </div>
+                </div>
+              )}
 
             <div className="flex gap-4 mb-8">
               <button

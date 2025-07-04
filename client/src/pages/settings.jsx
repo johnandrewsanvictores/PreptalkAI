@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 import PublicLayout from "../layout/PublicLayout.jsx";
 import { showSuccess } from "../utils/alertHelper.js";
@@ -14,7 +14,7 @@ const Settings = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
 
-  const {user, userContext, setUserContext} = useAuth();
+  const { user, userContext, setUserContext } = useAuth();
 
   const hasRunUserContext = useRef(false);
   const hasFetchedBusiness = useRef(false);
@@ -84,37 +84,36 @@ const Settings = () => {
       try {
         console.log(user.userId);
         const res = await api.post(
-            "/user/createResume",
-            {
-              fullName: formattedText.fullName,
-              email: formattedText.email,
-              location: formattedText.location,
-              jobRole: formattedText.jobRole,
-              softSkills: formattedText.softSkills,
-              hardSkills: formattedText.hardSkills,
-              education: formattedText.education,
-              projects: formattedText.projects,
-              certification: formattedText.certification,
-              bio: formattedText.bio,
-              userId: user.userId,
-            },
-            { withCredentials: true }
+          "/user/createResume",
+          {
+            fullName: formattedText.fullName,
+            email: formattedText.email,
+            location: formattedText.location,
+            jobRole: formattedText.jobRole,
+            softSkills: formattedText.softSkills,
+            hardSkills: formattedText.hardSkills,
+            education: formattedText.education,
+            projects: formattedText.projects,
+            certification: formattedText.certification,
+            bio: formattedText.bio,
+            userId: user.userId,
+          },
+          { withCredentials: true }
         );
 
-        setUserContext({...personalInfo, userId: user._id});
-
+        setUserContext({ ...personalInfo, userId: user._id });
       } catch {
         setUserContext(null);
       }
-    }
-    if(formattedText) {
-      if(user.userType === 'freelancer') {
+    };
+    if (formattedText) {
+      if (user.userType === "freelancer") {
         console.log(formattedText);
         fetchFreelancer();
         hasRunUserContext.current = true;
       }
-    }else {
-      if(user.userType === 'freelancer') {
+    } else {
+      if (user.userType === "freelancer") {
         console.log("helloworld");
         console.log(userContext);
         if (userContext) {
@@ -125,7 +124,7 @@ const Settings = () => {
         fetchBusiness();
       }
     }
-  }, [])
+  }, []);
 
   useEffect(() => {
     if (formattedText) {
@@ -143,8 +142,6 @@ const Settings = () => {
         bio: formattedText.bio || "",
       }));
     }
-
-
   }, [formattedText]);
 
   const handlePersonalChange = (e) => {

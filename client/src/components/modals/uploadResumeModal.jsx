@@ -146,7 +146,6 @@ ${rawText}
 
       console.log(formattedText);
       navigate("/settings", { state: { formattedText: formatted } });
-
     } catch (err) {
       console.error("Upload/Format failed:", err);
       setError("Failed to upload and process resume. Please try again.");
@@ -163,7 +162,11 @@ ${rawText}
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
   };
 
-  if (!isOpen) return null;
+  if (!isOpen) {
+    console.log("Modal not open");
+    return null;
+  }
+  console.log("Modal open");
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
