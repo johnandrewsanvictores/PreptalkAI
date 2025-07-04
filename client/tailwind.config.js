@@ -30,6 +30,7 @@ module.exports = {
       animation: {
         "fade-in-up": "fadeInUp 0.7s ease-out forwards",
         "bounce-slow": "bounce 2s infinite",
+        blob: "blob 7s infinite",
       },
       keyframes: {
         fadeInUp: {
@@ -42,8 +43,36 @@ module.exports = {
             transform: "translateY(0)",
           },
         },
+        blob: {
+          "0%": {
+            transform: "translate(0px, 0px) scale(1)",
+          },
+          "33%": {
+            transform: "translate(30px, -50px) scale(1.1)",
+          },
+          "66%": {
+            transform: "translate(-20px, 20px) scale(0.9)",
+          },
+          "100%": {
+            transform: "translate(0px, 0px) scale(1)",
+          },
+        },
+      },
+      animationDelay: {
+        200: "200ms",
+        400: "400ms",
+        1000: "1000ms",
+        2000: "2000ms",
+        4000: "4000ms",
       },
     },
   },
   plugins: [require("tailwindcss-animate")],
+  safelist: [
+    "animation-delay-200",
+    "animation-delay-400",
+    "animation-delay-1000",
+    "animation-delay-2000",
+    "animation-delay-4000",
+  ],
 };
