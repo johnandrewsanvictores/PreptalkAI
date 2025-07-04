@@ -1,4 +1,13 @@
 import PublicLayout from "../layout/PublicLayout.jsx";
+import confidenceImage from "../assets/confidence.jpg";
+import competeImage from "../assets/compete.jpg";
+import opportunityImage from "../assets/opportunity.jpg";
+import freelancerImage from "../assets/freelancer.jpg";
+import microEntrepreneurImage from "../assets/microEntrep.jpg";
+import feedbackImage from "../assets/feedback.jpg";
+import image2 from "../assets/2.jpg";
+import image3 from "../assets/3.jpg";
+import image4 from "../assets/4.jpg";
 
 const Aboutpage = () => {
   return (
@@ -41,11 +50,13 @@ const Aboutpage = () => {
         </div>
       </section>
 
-      <section className="py-24 px-4 bg-bgColor2">
+      <section className="py-24 px-4 bg-white dark:bg-gray-900 transition-colors duration-300">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-h2 font-bold text-primary mb-6">Our Mission</h2>
-            <p className="text-h6 text-subHeadingText max-w-3xl mx-auto">
+            <h2 className="text-h2 font-bold text-headingText dark:text-primary mb-6">
+              Our Mission
+            </h2>
+            <p className="text-h6 text-subHeadingText dark:text-gray-300 max-w-3xl mx-auto">
               To empower Filipino freelancers and micro-entrepreneurs with the
               confidence and communication skills they need to compete and grow
               on the global stage.
@@ -53,65 +64,65 @@ const Aboutpage = () => {
           </div>
 
           <div className="grid grid-cols-3 grid-rows-2 gap-6 h-[600px]">
-            <div className="bg-bgColor border border-gray-300 flex items-center justify-center p-8 text-center rounded-lg">
+            <div className="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 flex items-center justify-center p-8 text-center rounded-xl shadow-md hover:shadow-lg transition-all duration-300">
               <div>
-                <h3 className="text-h4 font-bold text-headingText mb-4">
+                <h3 className="text-h4 font-bold text-headingText dark:text-white mb-4">
                   Build Confidence.
                 </h3>
-                <p className="text-h6 text-subHeadingText">
+                <p className="text-h6 text-subHeadingText dark:text-gray-300">
                   Turn Shyness Into Strength
                 </p>
               </div>
             </div>
 
-            <div className="bg-bgColor border border-gray-300 overflow-hidden rounded-lg relative">
-              <div className="absolute inset-0 flex items-center justify-center p-6">
+            <div className="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 overflow-hidden rounded-xl shadow-md hover:shadow-lg transition-all duration-300 relative">
+              <div className="absolute inset-0">
                 <img
-                  src="https://images.unsplash.com/photo-1551650975-87deedd944c3?q=80&w=800&auto=format&fit=crop"
+                  src={confidenceImage}
                   alt="Mobile apps and devices"
-                  className="w-full h-full object-contain"
+                  className="w-full h-full object-cover"
                 />
               </div>
             </div>
 
-            <div className="bg-bgColor border border-gray-300 flex items-center justify-center p-8 text-center rounded-lg">
+            <div className="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 flex items-center justify-center p-8 text-center rounded-xl shadow-md hover:shadow-lg transition-all duration-300">
               <div>
-                <h3 className="text-h4 font-bold text-headingText mb-4">
+                <h3 className="text-h4 font-bold text-headingText dark:text-white mb-4">
                   Compete Globally.
                 </h3>
-                <p className="text-h6 text-subHeadingText">
+                <p className="text-h6 text-subHeadingText dark:text-gray-300">
                   Turn Practice Into Power
                 </p>
               </div>
             </div>
 
-            <div className="bg-bgColor border border-gray-300 flex items-center justify-center p-8 text-center rounded-lg">
+            <div className="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 flex items-center justify-center p-8 text-center rounded-xl shadow-md hover:shadow-lg transition-all duration-300">
               <div>
-                <h3 className="text-h4 font-bold text-headingText mb-4">
+                <h3 className="text-h4 font-bold text-headingText dark:text-white mb-4">
                   Unlock Opportunities.
                 </h3>
-                <p className="text-h6 text-subHeadingText">
+                <p className="text-h6 text-subHeadingText dark:text-gray-300">
                   Turn Skills Into Success
                 </p>
               </div>
             </div>
 
-            <div className="bg-bgColor border border-gray-300 overflow-hidden rounded-lg relative">
-              <div className="absolute inset-0 flex items-center justify-center p-4">
+            <div className="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 overflow-hidden rounded-xl shadow-md hover:shadow-lg transition-all duration-300 relative">
+              <div className="absolute inset-0">
                 <img
-                  src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=800&auto=format&fit=crop"
+                  src={opportunityImage}
                   alt="Business analytics dashboard"
-                  className="w-full h-full object-contain"
+                  className="w-full h-full object-cover"
                 />
               </div>
             </div>
 
-            <div className="bg-bgColor border border-gray-300 overflow-hidden rounded-lg relative">
-              <div className="absolute inset-0 flex items-center justify-center p-4">
+            <div className="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 overflow-hidden rounded-xl shadow-md hover:shadow-lg transition-all duration-300 relative">
+              <div className="absolute inset-0">
                 <img
-                  src="https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?q=80&w=400&auto=format&fit=crop"
+                  src={competeImage}
                   alt="Mobile phone interface"
-                  className="w-full h-full object-contain"
+                  className="w-full h-full object-cover"
                 />
               </div>
             </div>
@@ -146,7 +157,7 @@ const Aboutpage = () => {
               </div>
               <div className="flex justify-center">
                 <img
-                  src="https://images.unsplash.com/photo-1541961017774-22349e4a1262?q=80&w=800&auto=format&fit=crop"
+                  src={freelancerImage}
                   alt="Creative freelancer working with art palette"
                   className="w-full h-80 object-cover rounded-xl shadow-lg"
                 />
@@ -156,7 +167,7 @@ const Aboutpage = () => {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
               <div className="flex justify-center order-2 lg:order-1">
                 <img
-                  src="https://images.unsplash.com/photo-1528716321680-815a8cdb8cbe?q=80&w=800&auto=format&fit=crop"
+                  src={microEntrepreneurImage}
                   alt="Natural bamboo texture representing growth"
                   className="w-full h-80 object-cover rounded-xl shadow-lg"
                 />
@@ -178,13 +189,13 @@ const Aboutpage = () => {
         </div>
       </section>
 
-      <section className="py-24 px-4 bg-bgColor2">
+      <section className="py-24 px-4 bg-white dark:bg-gray-900 transition-colors duration-300 border-b border-gray-200 dark:border-gray-700">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-h2 font-bold text-primary mb-6">
+            <h2 className="text-h2 font-bold text-headingText dark:text-primary mb-6">
               What makes it different
             </h2>
-            <p className="text-h6 text-subHeadingText max-w-4xl mx-auto">
+            <p className="text-h6 text-subHeadingText dark:text-gray-300 max-w-4xl mx-auto">
               Preptalk AI is built for freelancers and micro-entrepreneurs who
               have the skills, passion, and drive— but struggle to communicate
               that confidently when it matters most.
@@ -195,13 +206,13 @@ const Aboutpage = () => {
             <div className="text-center">
               <div className="mb-4">
                 <img
-                  src="https://images.unsplash.com/photo-1677442136019-21780ecad995?q=80&w=600&auto=format&fit=crop"
+                  src={feedbackImage}
                   alt="AI and technology concept"
                   className="w-full h-[320px] object-cover rounded-xl"
                 />
               </div>
-              <div className="bg-white p-6 rounded-xl shadow-sm">
-                <p className="text-base text-subHeadingText leading-relaxed font-medium">
+              <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md border border-gray-100 dark:border-gray-700">
+                <p className="text-base text-subHeadingText dark:text-gray-300 leading-relaxed font-medium">
                   AI-driven feedback and progress tracking
                 </p>
               </div>
@@ -210,13 +221,13 @@ const Aboutpage = () => {
             <div className="text-center">
               <div className="mb-4">
                 <img
-                  src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=600&auto=format&fit=crop"
+                  src={image2}
                   alt="Professional communication and soft skills"
                   className="w-full h-[320px] object-cover rounded-xl"
                 />
               </div>
-              <div className="bg-white p-6 rounded-xl shadow-sm">
-                <p className="text-base text-subHeadingText leading-relaxed font-medium">
+              <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md border border-gray-100 dark:border-gray-700">
+                <p className="text-base text-subHeadingText dark:text-gray-300 leading-relaxed font-medium">
                   Focused on soft skills and real-world practice
                 </p>
               </div>
@@ -225,13 +236,13 @@ const Aboutpage = () => {
             <div className="text-center">
               <div className="mb-4">
                 <img
-                  src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=600&auto=format&fit=crop"
+                  src={image3}
                   alt="Business meeting and collaboration"
                   className="w-full h-[320px] object-cover rounded-xl"
                 />
               </div>
-              <div className="bg-white p-6 rounded-xl shadow-sm">
-                <p className="text-base text-subHeadingText leading-relaxed font-medium">
+              <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md border border-gray-100 dark:border-gray-700">
+                <p className="text-base text-subHeadingText dark:text-gray-300 leading-relaxed font-medium">
                   Includes both freelancer and entrepreneurial tracks
                 </p>
               </div>
@@ -240,13 +251,13 @@ const Aboutpage = () => {
             <div className="text-center">
               <div className="mb-4">
                 <img
-                  src="https://images.unsplash.com/photo-1560472354-b33ff0c44a43?q=80&w=600&auto=format&fit=crop"
+                  src={image4}
                   alt="Clear communication and presentation"
                   className="w-full h-[320px] object-cover rounded-xl"
                 />
               </div>
-              <div className="bg-white p-6 rounded-xl shadow-sm">
-                <p className="text-base text-subHeadingText leading-relaxed font-medium">
+              <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md border border-gray-100 dark:border-gray-700">
+                <p className="text-base text-subHeadingText dark:text-gray-300 leading-relaxed font-medium">
                   Emphasizes clear communication, confidence, and persuasion
                 </p>
               </div>

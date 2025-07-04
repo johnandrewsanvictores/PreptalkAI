@@ -14,50 +14,50 @@ const agents = [
   {
     name: "Brandon",
     role: "",
-    personality: "Confident, formal, authoritative male",
+    personality: "Confident, Formal, Authoritative",
     img: BrandonImage,
     description:
-      "",
+      "A confident and assertive presence, Brandon speaks with clarity and authority. He carries a formal, professional demeanor that reflects leadership and control.",
   },
   {
     name: "Davis",
     role: "",
-    personality: "Unfriendly, older male",
+    personality: "Direct, Disciplined, Serious",
     img: DavisImage,
     description:
-      "",
+      "Davis is direct, disciplined, and serious. He has a commanding presence and values precision, making him feel like a veteran in high-pressure environments.",
   },
   {
     name: "Harvey",
     role: "",
-    personality: "Disinterested, monotone male",
+    personality: "Calm, Neutral Expression",
     img: HarveyImage,
     description:
-      "",
+      "Calm and detached, Harvey maintains a neutral expression and flat tone. His passive presence makes him hard to read—reserved, observant, and composed.",
   },
   {
     name: "Sara",
     role: "",
-    personality: "Serious, older female",
+    personality: "Focused, Respectful, Mature",
     img: SaraImage,
     description:
-      "",
+      "Sara is poised, focused, and respectful. She brings a quiet intensity and thoughtful presence that reflects experience, maturity, and high standards.",
   },
   {
     name: "Rosa",
     role: "",
-    personality: "Supportive but Direct Career Coach",
+    personality: "Warm, Constructive, Insightful",
     img: RosaImage,
     description:
-      "",
+      "Warm, constructive, and insightful—Rosa offers a balanced mix of kindness and professionalism. She’s the type who inspires confidence with her calm and thoughtful personality.",
   },
   {
     name: "Rona",
     role: "",
-    personality: "friendly female",
+    personality: "Friendly, Upbeat, Approachable",
     img: RonaImage,
     description:
-      "",
+      "Friendly, upbeat, and approachable, Rona brings positive energy to every interaction. She creates a welcoming atmosphere and naturally puts people at ease.",
   },
 ];
 
@@ -136,7 +136,7 @@ export default function InterviewSettings() {
       title: "All-in-one Interview",
       focus: "All Skills from Other Interview Types",
       description:
-        "Experience a full simulation that blends product presentation, customer interaction, and business pitching it’s ideal for advanced practice, testing your overall soft skills and strategic thinking.",
+        "Experience a full simulation that blends product presentation, customer interaction, and business pitching it's ideal for advanced practice, testing your overall soft skills and strategic thinking.",
     },
   ];
 
@@ -508,7 +508,14 @@ export default function InterviewSettings() {
                 {currentInterviewTypes.map((type) => (
                   <div
                     key={type.id}
-                    onClick={() => setQuestionType(prev => ({...prev, id:type.id, description:type.description, focus:type.focus}))}
+                    onClick={() =>
+                      setQuestionType((prev) => ({
+                        ...prev,
+                        id: type.id,
+                        description: type.description,
+                        focus: type.focus,
+                      }))
+                    }
                     className={`bg-bgColor rounded-xl p-4 sm:p-5 lg:p-6 cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-lg border-2 ${
                       questionType.id === type.id
                         ? "border-primary shadow-lg bg-primary/5"

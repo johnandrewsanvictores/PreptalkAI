@@ -3,8 +3,8 @@ import { useNavigate, useLocation } from "react-router-dom";
 import QuitInterviewModal from "../components/modals/quitInterviewModal.jsx";
 import FinishInterviewModal from "../components/modals/finishInterviewModal.jsx";
 import imageBackground from "../assets/officeBG.jpg";
-import {useAuth} from "../context/AuthContext.jsx";
-import {getFreelancerQPrompt} from "../data/questionPrompt.js";
+import { useAuth } from "../context/AuthContext.jsx";
+import { getFreelancerQPrompt } from "../data/questionPrompt.js";
 
 export default function InterviewPage() {
   const navigate = useNavigate();
@@ -15,7 +15,7 @@ export default function InterviewPage() {
 
   const { user, userContext } = useAuth();
   const [personalInfo, setPersonalInfo] = useState({
-    bio :userContext.bio,
+    bio: userContext.bio,
     certification: userContext.certification,
     education: userContext.education,
     email: userContext.email,
@@ -24,7 +24,7 @@ export default function InterviewPage() {
     jobRole: userContext.jobRole,
     location: userContext.location,
     projects: userContext.projects,
-    softSkills: userContext.softSkills
+    softSkills: userContext.softSkills,
   });
 
   const interviewSettings = location.state?.interviewSettings;
@@ -44,14 +44,47 @@ export default function InterviewPage() {
   const [isPracticeReady, setIsPracticeReady] = useState(false);
   const [isRealReady, setIsRealReady] = useState(false);
 
+  const [displayedText, setDisplayedText] = useState("");
+  const [isTyping, setIsTyping] = useState(false);
+
+  useEffect(() => {
+    if (questions.length > 0 && currentQuestion < questions.length) {
+      const currentQuestionText = questions[currentQuestion];
+      if (
+        currentQuestionText &&
+        (isPracticeReady || (isRealReady && isRealInterviewStarted))
+      ) {
+        setIsTyping(true);
+        setDisplayedText("");
+
+        let index = 0;
+        const typeInterval = setInterval(() => {
+          if (index < currentQuestionText.length) {
+            setDisplayedText((prev) => currentQuestionText.slice(0, index + 1));
+            index++;
+          } else {
+            setIsTyping(false);
+            clearInterval(typeInterval);
+          }
+        }, 50);
+
+        return () => clearInterval(typeInterval);
+      }
+    }
+  }, [
+    currentQuestion,
+    questions,
+    isPracticeReady,
+    isRealReady,
+    isRealInterviewStarted,
+  ]);
 
   useEffect(() => {
     if (!interviewSettings) {
       navigate("/interview-settings");
     }
 
-
-    if(user.userType === "freelancer"){
+    if (user.userType === "freelancer") {
       const num = Math.floor(Math.random() * 100) + 1;
       console.log(num);
       const prompt = getFreelancerQPrompt(personalInfo, interviewSettings, num);
@@ -60,7 +93,9 @@ export default function InterviewPage() {
       const encodedPrompt = encodeURIComponent(prompt.trim());
       const fetchFreelancerQPrompt = async () => {
         try {
-          const response = await fetch(`https://text.pollinations.ai/${encodedPrompt}`);
+          const response = await fetch(
+            `https://text.pollinations.ai/${encodedPrompt}`
+          );
           if (!response.ok) {
             throw new Error(`API request failed: ${response.statusText}`);
           }
@@ -74,15 +109,12 @@ export default function InterviewPage() {
           console.error("Error fetching interview questions:", error);
           return null;
         }
-      }
+      };
 
-      fetchFreelancerQPrompt()
+      fetchFreelancerQPrompt();
 
       console.log(questions);
     }
-
-
-
   }, [interviewSettings, navigate]);
 
   useEffect(() => {
@@ -107,6 +139,43 @@ export default function InterviewPage() {
       }
     };
   }, []);
+
+  useEffect(() => {
+    return () => {
+      if (stream) {
+        stream.getTracks().forEach((track) => track.stop());
+      }
+    };
+  }, [stream]);
+
+  useEffect(() => {
+    if (showFinishModal && stream) {
+      stream.getTracks().forEach((track) => track.stop());
+      setStream(null);
+    }
+  }, [showFinishModal, stream]);
+
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      if (stream) {
+        stream.getTracks().forEach((track) => track.stop());
+      }
+    };
+
+    const handlePopState = () => {
+      if (stream) {
+        stream.getTracks().forEach((track) => track.stop());
+      }
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    window.addEventListener("popstate", handlePopState);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+      window.removeEventListener("popstate", handlePopState);
+    };
+  }, [stream]);
 
   const handleNextQuestion = () => {
     if (currentQuestion < questions.length - 1) {
@@ -310,7 +379,6 @@ export default function InterviewPage() {
         )}
       </div>
 
-      {/* End Interview button only in Practice Mode */}
       {isPracticeMode && (
         <button
           onClick={handleBackClick}
@@ -332,7 +400,6 @@ export default function InterviewPage() {
         </button>
       )}
 
-      {/* AI Interviewer - Natural placement without background */}
       {interviewSettings?.selectedAgent?.img ? (
         <div className="absolute left-1/2 bottom-[160px] transform -translate-x-1/2 z-20">
           <img
@@ -365,7 +432,10 @@ export default function InterviewPage() {
                     className="text-h6 text-gray-800 text-left leading-relaxed tracking-normal"
                     style={{ padding: 0, margin: 0 }}
                   >
-                    {questions[currentQuestion]}
+                    {displayedText}
+                    {isTyping && (
+                      <span className="inline-block w-2 h-6 bg-gray-800 ml-1 animate-pulse"></span>
+                    )}
                   </h2>
                 )}
               </div>
@@ -390,7 +460,6 @@ export default function InterviewPage() {
               </div>
             </>
           ) : (
-            // Real Interview Mode - Match Practice Mode layout
             <>
               <div className="w-full h-auto">
                 {!isRealReady ? (
@@ -405,7 +474,10 @@ export default function InterviewPage() {
                       className="text-h6 text-gray-800 text-left leading-relaxed tracking-normal"
                       style={{ padding: 0, margin: 0 }}
                     >
-                      {questions[currentQuestion]}
+                      {displayedText}
+                      {isTyping && (
+                        <span className="inline-block w-2 h-6 bg-gray-800 ml-1 animate-pulse"></span>
+                      )}
                     </h2>
                   )
                 )}
@@ -438,7 +510,6 @@ export default function InterviewPage() {
                   </div>
                 )
               )}
-              {/* No Finish Interview button in Real Interview mode; handled by modal when last question is done */}
             </>
           )}
         </div>
