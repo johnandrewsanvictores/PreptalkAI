@@ -3,61 +3,61 @@ import PublicLayout from "../layout/PublicLayout.jsx";
 import { useNavigate } from "react-router-dom";
 import { FaCamera } from "react-icons/fa";
 import { useAuth } from "../context/AuthContext.jsx";
-import BrandonImage from "../assets/Brandon.png";
-import DavisImage from "../assets/Davis.png";
-import HarveyImage from "../assets/Harvey.png";
-import SaraImage from "../assets/Sara.png";
-import RosaImage from "../assets/Rosa.png";
-import RonaImage from "../assets/Rona.png";
+import BrandonImage from "../assets/brandon.png";
+import DavisImage from "../assets/davis.png";
+import HarveyImage from "../assets/harvey.png";
+import SaraImage from "../assets/sara.png";
+import RosaImage from "../assets/rosa.png";
+import RonaImage from "../assets/rona.png";
 
 const agents = [
   {
     name: "Brandon",
     role: "",
-    personality: "Confident, formal, authoritative male",
+    personality: "Confident, Formal, Authoritative",
     img: BrandonImage,
     description:
-      "",
+      "A confident and assertive presence, Brandon speaks with clarity and authority. He carries a formal, professional demeanor that reflects leadership and control.",
   },
   {
     name: "Davis",
     role: "",
-    personality: "Unfriendly, older male",
+    personality: "Direct, Disciplined, Serious",
     img: DavisImage,
     description:
-      "",
+      "Davis is direct, disciplined, and serious. He has a commanding presence and values precision, making him feel like a veteran in high-pressure environments.",
   },
   {
     name: "Harvey",
     role: "",
-    personality: "Disinterested, monotone male",
+    personality: "Calm, Neutral Expression",
     img: HarveyImage,
     description:
-      "",
+      "Calm and detached, Harvey maintains a neutral expression and flat tone. His passive presence makes him hard to read—reserved, observant, and composed.",
   },
   {
     name: "Sara",
     role: "",
-    personality: "Serious, older female",
+    personality: "Focused, Respectful, Mature",
     img: SaraImage,
     description:
-      "",
+      "Sara is poised, focused, and respectful. She brings a quiet intensity and thoughtful presence that reflects experience, maturity, and high standards.",
   },
   {
     name: "Rosa",
     role: "",
-    personality: "Supportive but Direct Career Coach",
+    personality: "Warm, Constructive, Insightful",
     img: RosaImage,
     description:
-      "",
+      "Warm, constructive, and insightful—Rosa offers a balanced mix of kindness and professionalism. She's the type who inspires confidence with her calm and thoughtful personality.",
   },
   {
     name: "Rona",
     role: "",
-    personality: "friendly female",
+    personality: "Friendly, Upbeat, Approachable",
     img: RonaImage,
     description:
-      "",
+      "Friendly, upbeat, and approachable, Rona brings positive energy to every interaction. She creates a welcoming atmosphere and naturally puts people at ease.",
   },
 ];
 
@@ -136,7 +136,7 @@ export default function InterviewSettings() {
       title: "All-in-one Interview",
       focus: "All Skills from Other Interview Types",
       description:
-        "Experience a full simulation that blends product presentation, customer interaction, and business pitching it’s ideal for advanced practice, testing your overall soft skills and strategic thinking.",
+        "Experience a full simulation that blends product presentation, customer interaction, and business pitching it's ideal for advanced practice, testing your overall soft skills and strategic thinking.",
     },
   ];
 
@@ -163,13 +163,13 @@ export default function InterviewSettings() {
       return;
     }
 
-    if (!numQuestions || numQuestions < 1 || numQuestions > 10) {
-      alert("Please enter a valid number of main questions (1-10)");
+    if (!numQuestions || numQuestions < 5 || numQuestions > 10) {
+      alert("Please enter a valid number of main questions (5-10)");
       return;
     }
 
-    if (maximumFQ === "" || maximumFQ < 0 || maximumFQ > 5) {
-      alert("Please enter a valid number of follow-up questions (0-5)");
+    if (maximumFQ === "" || maximumFQ < 1 || maximumFQ > 5) {
+      alert("Please enter a valid number of follow-up questions (1-5)");
       return;
     }
 
@@ -191,10 +191,10 @@ export default function InterviewSettings() {
     return (
       questionType &&
       numQuestions &&
-      numQuestions >= 1 &&
+      numQuestions >= 5 &&
       numQuestions <= 10 &&
       maximumFQ !== "" &&
-      maximumFQ >= 0 &&
+      maximumFQ >= 1 &&
       maximumFQ <= 5
     );
   };
@@ -439,42 +439,76 @@ export default function InterviewSettings() {
                 </p>
               </div>
 
+              {/* Difficulty Selector - perfectly aligned with track */}
               <div className="max-w-4xl mx-auto">
-                <div className="relative flex items-center justify-between px-4 sm:px-6 lg:px-8">
-                  <div className="absolute left-4 sm:left-6 lg:left-8 right-4 sm:right-6 lg:right-8 top-1/2 transform -translate-y-1/2 h-1 bg-gray-300 rounded-full" />
-
+                {/* Track and Radio Buttons */}
+                <div
+                  className="relative flex justify-between items-center px-4 sm:px-6 lg:px-8"
+                  style={{ height: "2.5rem" }}
+                >
+                  {/* Track */}
+                  <div className="absolute left-0 right-0 top-1/2 transform -translate-y-1/2 h-1 bg-gray-300 rounded-full z-0" />
+                  {/* Radio buttons */}
                   {difficulties.map((level, index) => {
                     const isActive = difficulty === index;
                     return (
                       <div
                         key={level}
-                        className="relative z-10 flex flex-col items-center"
+                        className="flex flex-col items-center z-10"
+                        style={{ minWidth: 60 }}
                       >
                         <button
                           onClick={() => setDifficulty(index)}
-                          className={`w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 rounded-full border-2 sm:border-4 transition-all duration-300 ${
-                            isActive
-                              ? "border-primary bg-white shadow-lg ring-2 sm:ring-4 ring-primary/20"
-                              : "border-gray-300 bg-gray-300 hover:border-primary/50"
-                          }`}
-                        />
-                        <span
-                          className={`mt-2 sm:mt-3 lg:mt-4 text-small sm:text-p font-semibold transition-colors ${
-                            isActive ? "text-primary" : "text-subHeadingText"
-                          }`}
+                          className="focus:outline-none"
+                          type="button"
+                          tabIndex={0}
                         >
-                          {level}
-                        </span>
-                        {isActive && (
-                          <div className="mt-1 sm:mt-2 bg-primary/10 px-2 sm:px-3 py-1 rounded-full">
-                            <span className="text-small text-primary font-medium">
-                              Selected
-                            </span>
-                          </div>
-                        )}
+                          <span
+                            className={`w-6 h-6 rounded-full border-2 transition-all duration-300 flex items-center justify-center
+                              ${
+                                isActive
+                                  ? "border-blue-500 bg-white ring-2 ring-blue-200"
+                                  : "border-gray-300 bg-gray-200"
+                              }
+                            `}
+                          >
+                            {isActive && (
+                              <span className="w-3 h-3 bg-blue-500 rounded-full block" />
+                            )}
+                          </span>
+                        </button>
                       </div>
                     );
                   })}
+                </div>
+                {/* Labels and Selected indicator */}
+                <div className="flex justify-between px-4 sm:px-6 lg:px-8 mt-4">
+                  {difficulties.map((level, index) => (
+                    <div
+                      key={level}
+                      className="flex flex-col items-center"
+                      style={{ minWidth: 60 }}
+                    >
+                      <span
+                        className={`text-sm font-medium ${
+                          difficulty === index
+                            ? "text-blue-600"
+                            : "text-gray-500"
+                        }`}
+                        style={{ textAlign: "center" }}
+                      >
+                        {level}
+                      </span>
+                      <span
+                        className={`text-xs rounded-full px-3 py-1 bg-blue-100 text-blue-600 font-semibold mt-2 ${
+                          difficulty === index ? "block" : "invisible"
+                        }`}
+                        style={{ textAlign: "center" }}
+                      >
+                        Selected
+                      </span>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
@@ -490,7 +524,7 @@ export default function InterviewSettings() {
                 </h3>
                 <p className="text-small sm:text-p lg:text-h6 text-subHeadingText max-w-4xl mx-auto px-2">
                   Choose the interview type you want to practice. Each type is
-                  designed to help you improve specific soft skills based on
+                  designed to help you improve specific skills based on
                   real-world scenarios.
                 </p>
                 {!questionType && (
@@ -508,7 +542,14 @@ export default function InterviewSettings() {
                 {currentInterviewTypes.map((type) => (
                   <div
                     key={type.id}
-                    onClick={() => setQuestionType(prev => ({...prev, id:type.id, description:type.description, focus:type.focus}))}
+                    onClick={() =>
+                      setQuestionType((prev) => ({
+                        ...prev,
+                        id: type.id,
+                        description: type.description,
+                        focus: type.focus,
+                      }))
+                    }
                     className={`bg-bgColor rounded-xl p-4 sm:p-5 lg:p-6 cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-lg border-2 ${
                       questionType.id === type.id
                         ? "border-primary shadow-lg bg-primary/5"
@@ -555,27 +596,27 @@ export default function InterviewSettings() {
                       Number of Main Questions{" "}
                       <span className="text-red text-h6">*</span>
                       <span className="text-small text-subHeadingText font-normal ml-2">
-                        (max 10)
+                        (5-10)
                       </span>
                     </label>
                     <input
                       type="number"
-                      min="1"
+                      min="5"
                       max="10"
                       value={numQuestions}
                       onChange={(e) => setNumQuestions(e.target.value)}
                       className={`w-full border rounded-lg px-3 sm:px-4 py-3 sm:py-4 text-small sm:text-p bg-bgColor2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-colors ${
-                        !numQuestions || numQuestions < 1 || numQuestions > 10
+                        !numQuestions || numQuestions < 5 || numQuestions > 10
                           ? "border-red"
                           : "border-gray-300"
                       }`}
                       placeholder="Enter a number"
                     />
                     {(!numQuestions ||
-                      numQuestions < 1 ||
+                      numQuestions < 5 ||
                       numQuestions > 10) && (
                       <div className="mt-1 text-red text-small">
-                        Please enter a number between 1 and 10
+                        Please enter a number between 5 and 10
                       </div>
                     )}
                   </div>
@@ -584,25 +625,25 @@ export default function InterviewSettings() {
                       Enter Number of Follow-Up Questions{" "}
                       <span className="text-red text-h6">*</span>
                       <span className="text-small text-subHeadingText font-normal ml-2">
-                        (max 5)
+                        (1-5)
                       </span>
                     </label>
                     <input
                       type="number"
-                      min="0"
+                      min="1"
                       max="5"
                       value={maximumFQ}
                       onChange={(e) => setMaximumFQ(e.target.value)}
                       className={`w-full border rounded-lg px-3 sm:px-4 py-3 sm:py-4 text-small sm:text-p bg-bgColor2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-colors ${
-                        maximumFQ === "" || maximumFQ < 0 || maximumFQ > 5
+                        maximumFQ === "" || maximumFQ < 1 || maximumFQ > 5
                           ? "border-red"
                           : "border-gray-300"
                       }`}
                       placeholder="Enter a number"
                     />
-                    {(maximumFQ === "" || maximumFQ < 0 || maximumFQ > 5) && (
+                    {(maximumFQ === "" || maximumFQ < 1 || maximumFQ > 5) && (
                       <div className="mt-1 text-red text-small">
-                        Please enter a number between 0 and 5
+                        Please enter a number between 1 and 5
                       </div>
                     )}
                   </div>
@@ -651,7 +692,8 @@ export default function InterviewSettings() {
                   </div>
                   Practice Interview
                   <p className="text-small mt-1 sm:mt-2 opacity-80">
-                    Helpful tips, retry options, and guided feedback
+                    A relaxed mode where you can skip questions, leave anytime,
+                    and practice without pressure. No silence timer.
                   </p>
                 </label>
 
@@ -683,7 +725,9 @@ export default function InterviewSettings() {
                   </div>
                   Real Interview Simulation
                   <p className="text-small mt-1 sm:mt-2 opacity-80">
-                    Realistic conditions with no hints or retries
+                    A timed, high-pressure simulation with no skip or exit
+                    options. A 10-second silence triggers the next question
+                    automatically.
                   </p>
                 </label>
               </div>
@@ -696,11 +740,11 @@ export default function InterviewSettings() {
                 </h4>
                 <ul className="text-small text-red space-y-1">
                   {!questionType && <li>• Select an interview type</li>}
-                  {(!numQuestions || numQuestions < 1 || numQuestions > 10) && (
-                    <li>• Enter number of main questions (1-10)</li>
+                  {(!numQuestions || numQuestions < 5 || numQuestions > 10) && (
+                    <li>• Enter number of main questions (5-10)</li>
                   )}
-                  {(maximumFQ === "" || maximumFQ < 0 || maximumFQ > 5) && (
-                    <li>• Enter number of follow-up questions (0-5)</li>
+                  {(maximumFQ === "" || maximumFQ < 1 || maximumFQ > 5) && (
+                    <li>• Enter number of follow-up questions (1-5)</li>
                   )}
                 </ul>
               </div>
