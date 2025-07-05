@@ -69,7 +69,7 @@ const Dashboard = () => {
                   onClick={handleBeginInterview}
                   className="bg-primary text-white p-1 px-14 text-h6 rounded-3xl mt-3 cursor-pointer hover:bg-primary/90 transition-colors"
                 >
-                  <i class="fa-solid fa-circle-play"></i> Begin Interview
+                  <i className="fa-solid fa-circle-play"></i> Begin Interview
                 </button>
               </div>
 
@@ -85,19 +85,27 @@ const Dashboard = () => {
                 <div className="content">
                   <div className="overviewDataContainer grid grid-cols-2 sm:grid-cols-4 gap-6 md:gap-10">
                     <div className="flex flex-col justify-center items-center">
-                      <p className="text-h5 text-headingText font-bold">{dashboardData?.quickOverview?.totalSessions ?? 0}</p>
+                      <p className="text-h5 text-headingText font-bold">
+                        {dashboardData?.quickOverview?.totalSessions ?? 0}
+                      </p>
                       <p>Total Session</p>
                     </div>
                     <div className="flex flex-col justify-center items-center">
-                      <p className="text-h5 font-bold text-green">{dashboardData?.quickOverview?.avgScore ?? 0}%</p>
+                      <p className="text-h5 font-bold text-green">
+                        {dashboardData?.quickOverview?.avgScore ?? 0}%
+                      </p>
                       <p>Avg Score</p>
                     </div>
                     <div className="flex flex-col justify-center items-center">
-                      <p className="text-h5 font-bold text-primary">{dashboardData?.quickOverview?.practiceTime ?? 0}</p>
+                      <p className="text-h5 font-bold text-primary">
+                        {dashboardData?.quickOverview?.practiceTime ?? 0}
+                      </p>
                       <p>Practice Time</p>
                     </div>
                     <div className="flex flex-col justify-center items-center">
-                      <p className="text-h5 font-bold">{dashboardData?.quickOverview?.skillsImproved ?? 0}</p>
+                      <p className="text-h5 font-bold">
+                        {dashboardData?.quickOverview?.skillsImproved ?? 0}
+                      </p>
                       <p className="">Skills Improved</p>
                     </div>
                   </div>
@@ -107,7 +115,7 @@ const Dashboard = () => {
             <div className="container2 grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10 w-full mt-10">
               <div className="recentSessionContainer bg-bgColor2 p-10 py-5 rounded-xl">
                 <p className="text-h5 text-headingText font-bold">
-                  <i class="fa-regular fa-clock pr-2"></i> Recent Sessions
+                  <i className="fa-regular fa-clock pr-2"></i> Recent Sessions
                 </p>
                 {dashboardData?.recentSessions?.length ? (
                   dashboardData.recentSessions.map((session, idx) => (
@@ -139,24 +147,29 @@ const Dashboard = () => {
 
               <div className="softSkillsSummaryContainer bg-bgColor2 rounded-xl p-10 py-5">
                 <p className="text-h5 text-headingText font-bold">
-                  <i class="fa-regular fa-clock pr-2"></i> Soft Skills Summary
+                  <i className="fa-regular fa-clock pr-2"></i> Soft Skills
+                  Summary
                 </p>
                 <div className="">
                   <div className="space-y-3">
-                    {(dashboardData?.skillsSummary ?? defaultSkills).map((skill) => (
-                      <div key={skill.name}>
-                        <div className="flex justify-between text-p my-4">
-                          <span className="text-gray-600">{skill.name}</span>
-                          <span className="text-gray-600">{skill.score}%</span>
+                    {(dashboardData?.skillsSummary ?? defaultSkills).map(
+                      (skill) => (
+                        <div key={skill.name}>
+                          <div className="flex justify-between text-p my-4">
+                            <span className="text-gray-600">{skill.name}</span>
+                            <span className="text-gray-600">
+                              {skill.score}%
+                            </span>
+                          </div>
+                          <div className="w-full bg-gray-200 rounded-full h-2">
+                            <div
+                              className="bg-blue-600 h-4 rounded-full"
+                              style={{ width: `${skill.score}%` }}
+                            ></div>
+                          </div>
                         </div>
-                        <div className="w-full bg-gray-200 rounded-full h-2">
-                          <div
-                            className="bg-blue-600 h-4 rounded-full"
-                            style={{ width: `${skill.score}%` }}
-                          ></div>
-                        </div>
-                      </div>
-                    ))}
+                      )
+                    )}
                   </div>
                 </div>
               </div>
@@ -164,7 +177,7 @@ const Dashboard = () => {
             <div className="container3 p-10 py-5 bg-bgColor2 rounded-xl mt-10 w-full">
               <p className="text-h4 text-headingText font-bold">
                 {" "}
-                <i class="fa-solid fa-triangle-exclamation text-brown text-h3"></i>{" "}
+                <i className="fa-solid fa-triangle-exclamation text-brown text-h3"></i>{" "}
                 Areas of Improvement
               </p>
               {dashboardData?.areasOfImprovement?.length ? (
