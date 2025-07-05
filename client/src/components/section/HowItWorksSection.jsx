@@ -31,21 +31,21 @@ const HowItWorksSection = () => {
       title: "Sign Up or Log in and Choose Your Role",
       description:
         "Create an account and login, and select whether you're in a Freelancer or a Micro-Entrepreneur to get a personalised experienced.",
-      videoPlaceholder: "role-selection",
+      videoPlaceholder: "interview.mp4",
     },
     {
       stepNumber: "02",
       title: "Upload Resume or Business Profile",
       description:
         "Submit your resume (for freelancers) or business pitch/profile (for MSMEs). This helps the AI tailor your interview or pitch session.",
-      videoPlaceholder: "profile-setup",
+      videoPlaceholder: "uploadResume.mp4",
     },
     {
       stepNumber: "03",
       title: "Set up your interview settings",
       description:
         "Customize your interview by selecting an AI agent (having a different personalities), choosing the level of difficulty, and deciding how questions will be handled—pick the interview type, number of main questions, and follow-up questions. You can also choose your interview experience: a casual practice mode or a realistic simulation mode for real-time pressure.",
-      videoPlaceholder: "mock-interview",
+      videoPlaceholder: "interviewSettings.mp4",
     },
     {
       stepNumber: "04",
