@@ -1,9 +1,9 @@
-import BrandonImage from "../../assets/Brandon.png";
-import DavisImage from "../../assets/Davis.png";
-import HarveyImage from "../../assets/Harvey.png";
-import SaraImage from "../../assets/Sara.png";
-import RosaImage from "../../assets/Rosa.png";
-import RonaImage from "../../assets/Rona.png";
+import BrandonImage from "../../assets/brandon.png";
+import DavisImage from "../../assets/davis.png";
+import HarveyImage from "../../assets/harvey.png";
+import SaraImage from "../../assets/sara.png";
+import RosaImage from "../../assets/rosa.png";
+import RonaImage from "../../assets/rona.png";
 
 const MeetAISection = () => {
   const aiAgents = [

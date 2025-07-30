@@ -26,7 +26,7 @@ export const useDIDStreaming = () => {
         setIsConnected(true);
         setIsConnecting(false);
 
-        // Set video stream when ready - with more robust handling
+        // Set video stream when ready
         if (videoRef.current) {
           const stream = serviceRef.current.getVideoStream();
           if (stream) {
@@ -35,30 +35,7 @@ export const useDIDStreaming = () => {
 
             // Ensure audio is enabled for D-ID speech
             videoRef.current.muted = false;
-            videoRef.current.volume = 1.0;
             console.log("🔊 Video unmuted for D-ID speech");
-
-            // Add event listeners to track video loading
-            videoRef.current.onloadedmetadata = () => {
-              console.log(
-                "📊 Video metadata loaded - dimensions:",
-                videoRef.current.videoWidth,
-                "x",
-                videoRef.current.videoHeight
-              );
-            };
-
-            videoRef.current.oncanplay = () => {
-              console.log("🎬 Video can play - ready for playback");
-            };
-
-            videoRef.current.onplay = () => {
-              console.log("▶️ Video started playing");
-            };
-
-            videoRef.current.onerror = (error) => {
-              console.error("❌ Video error:", error);
-            };
 
             // Try to play if not already playing
             videoRef.current.play().catch((error) => {
@@ -68,21 +45,10 @@ export const useDIDStreaming = () => {
               );
             });
           } else {
-            console.log("⚠️ No video stream available yet, will retry...");
-            // Retry after a short delay
-            setTimeout(() => {
-              const retryStream = serviceRef.current.getVideoStream();
-              if (retryStream && videoRef.current) {
-                console.log("🔄 Retry: Setting video stream to video element");
-                videoRef.current.srcObject = retryStream;
-                videoRef.current.muted = false;
-                videoRef.current.volume = 1.0;
-                videoRef.current.play().catch(console.warn);
-              }
-            }, 1000);
+            console.log("⚠️ No video stream available");
           }
         } else {
-          console.log("⚠️ Video ref not available - will retry when available");
+          console.log("⚠️ Video ref not available");
         }
       },
       onError: (err) => {
@@ -174,56 +140,19 @@ export const useDIDStreaming = () => {
   );
 
   const disconnect = useCallback(async () => {
-    console.log("🔌 Disconnecting D-ID streaming...");
-
     if (serviceRef.current) {
-      try {
-        await serviceRef.current.destroy();
-        console.log("✅ D-ID service destroyed successfully");
-      } catch (error) {
-        console.error("❌ Error destroying D-ID service:", error);
-      }
+      await serviceRef.current.destroy();
     }
-
-    // Reset all states
     setIsConnected(false);
     setIsStreamReady(false);
     setIsConnecting(false);
     setConnectionState("new");
-    setError(null);
-
-    // Clear video element if it exists
-    if (videoRef.current) {
-      videoRef.current.srcObject = null;
-      console.log("📺 Video element cleared");
-    }
-
-    console.log("🎉 D-ID streaming disconnected successfully");
   }, []);
 
   const setPresenter = useCallback((agentName) => {
     if (serviceRef.current) {
       serviceRef.current.setPresenter(agentName);
     }
-  }, []);
-
-  const retryVideoConnection = useCallback(() => {
-    console.log("🔄 Manually retrying video connection...");
-    if (serviceRef.current && videoRef.current) {
-      const stream = serviceRef.current.getVideoStream();
-      if (stream) {
-        console.log("✅ Found video stream, connecting...");
-        videoRef.current.srcObject = stream;
-        videoRef.current.muted = false;
-        videoRef.current.volume = 1.0;
-        videoRef.current.play().catch(console.warn);
-        return true;
-      } else {
-        console.log("❌ No video stream available for retry");
-        return false;
-      }
-    }
-    return false;
   }, []);
 
   return {
@@ -239,7 +168,6 @@ export const useDIDStreaming = () => {
     speak,
     disconnect,
     setPresenter,
-    retryVideoConnection,
 
     // Refs for video element
     videoRef,

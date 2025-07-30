@@ -7,8 +7,6 @@ class DIDStreamingService {
     this.videoStream = null;
     this.isStreamReady = false;
     this.selectedAgent = null;
-    this.streamCreatedAt = null;
-    this.streamRequestCount = 0;
 
     // Callbacks
     this.onStreamReadyCallback = null;
@@ -44,10 +42,9 @@ class DIDStreamingService {
   async connect() {
     if (
       this.peerConnection &&
-      this.peerConnection.connectionState === "connected" &&
-      this.isStreamHealthy()
+      this.peerConnection.connectionState === "connected"
     ) {
-      console.log("✅ Already connected with healthy stream");
+      console.log("✅ Already connected");
       return true;
     }
 
@@ -88,8 +85,6 @@ class DIDStreamingService {
 
       this.streamId = streamData.id;
       this.sessionId = streamData.session_id;
-      this.streamCreatedAt = Date.now();
-      this.streamRequestCount = 0;
       const { offer, ice_servers } = streamData;
 
       // Step 2: Create peer connection and handle the offer
@@ -231,46 +226,19 @@ class DIDStreamingService {
     console.log("🎥 onTrack event received:", event);
     console.log("📺 Event streams:", event.streams);
     console.log("🎬 Event track:", event.track);
-    console.log("🎭 Track kind:", event.track.kind);
-    console.log("🎭 Track readyState:", event.track.readyState);
 
     // Return the stream for the video element
     if (event.streams && event.streams[0]) {
       console.log("✅ Setting video stream:", event.streams[0]);
       this.videoStream = event.streams[0];
 
-      // Log stream details
-      console.log("📊 Stream details:", {
-        id: event.streams[0].id,
-        active: event.streams[0].active,
-        tracks: event.streams[0].getTracks().map((track) => ({
-          kind: track.kind,
-          enabled: track.enabled,
-          readyState: track.readyState,
-        })),
-      });
-
-      // Call the callback immediately when we get the stream
+      // Additional callback when stream is ready
       if (this.onStreamReadyCallback) {
         console.log("📞 Calling onStreamReadyCallback from onTrack");
         this.onStreamReadyCallback();
       }
-    } else if (event.track) {
-      // Handle individual track
-      console.log("🎬 Handling individual track:", event.track.kind);
-
-      // Create a MediaStream from the track if we don't have streams
-      if (!this.videoStream && event.track.kind === "video") {
-        console.log("🎥 Creating MediaStream from video track");
-        this.videoStream = new MediaStream([event.track]);
-
-        if (this.onStreamReadyCallback) {
-          console.log("📞 Calling onStreamReadyCallback from track");
-          this.onStreamReadyCallback();
-        }
-      }
     } else {
-      console.log("⚠️ No streams or tracks found in onTrack event");
+      console.log("⚠️ No streams found in onTrack event");
     }
   }
 
@@ -279,20 +247,12 @@ class DIDStreamingService {
       text: text?.substring(0, 50) + "...",
       voiceId,
     });
-
-    // Ensure we have a healthy stream before speaking
-    await this.ensureHealthyStream();
-
     console.log("📊 Current state:", {
       isStreamReady: this.isStreamReady,
       hasConnection: !!this.peerConnection,
       streamId: this.streamId,
       sessionId: this.sessionId,
       connectionState: this.peerConnection?.connectionState,
-      streamAge: this.streamCreatedAt
-        ? Math.floor((Date.now() - this.streamCreatedAt) / 1000) + "s"
-        : "N/A",
-      requestCount: this.streamRequestCount,
     });
 
     if (!this.isStreamReady) {
@@ -316,8 +276,6 @@ class DIDStreamingService {
     }
 
     try {
-      this.streamRequestCount++;
-
       // Step 4: Create a talk stream with the text
       const talkResponse = await fetch(
         `${this.config.url}/talks/streams/${this.streamId}`,
@@ -342,17 +300,6 @@ class DIDStreamingService {
       );
 
       if (!talkResponse.ok) {
-        const errorText = await talkResponse.text();
-        console.error("❌ Talk response error:", errorText);
-
-        // If we get a 400 error, the stream might be invalid
-        if (talkResponse.status === 400 || talkResponse.status === 402) {
-          console.log(
-            "🔄 Stream appears invalid, will reconnect on next request"
-          );
-          this.streamCreatedAt = 0; // Force reconnect on next speak
-        }
-
         throw new Error(`Failed to create talk: ${talkResponse.statusText}`);
       }
 
@@ -369,79 +316,38 @@ class DIDStreamingService {
   }
 
   cleanup() {
-    console.log("🧽 Cleaning up D-ID service resources...");
-
     // Close peer connection
     if (this.peerConnection) {
-      console.log("🔌 Closing peer connection...");
-
-      // Event listeners are automatically cleaned up when peer connection is closed
-
-      // Close the connection
       this.peerConnection.close();
       this.peerConnection = null;
-      console.log("✅ Peer connection closed");
     }
 
-    // Stop video stream if it exists
-    if (this.videoStream) {
-      console.log("🎥 Stopping video stream tracks...");
-      this.videoStream.getTracks().forEach((track) => {
-        track.stop();
-        console.log(`🔴 Stopped ${track.kind} track`);
-      });
-      this.videoStream = null;
-    }
-
-    // Reset all state
+    // Reset state
     this.streamId = null;
     this.sessionId = null;
     this.isStreamReady = false;
-    this.streamCreatedAt = null;
-    this.streamRequestCount = 0;
-
-    console.log("✅ D-ID service cleanup complete");
+    this.videoStream = null;
   }
 
   async destroy() {
-    console.log("🧹 Starting D-ID service destruction...");
-
-    // Stop any ongoing speech requests
-    this.isStreamReady = false;
-
     if (this.streamId && this.sessionId) {
       try {
-        console.log(`🗑️ Deleting D-ID stream: ${this.streamId}`);
         // Step 5: Delete the stream
-        const response = await fetch(
-          `${this.config.url}/talks/streams/${this.streamId}`,
-          {
-            method: "DELETE",
-            headers: {
-              Authorization: `Basic ${this.config.key}`,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ session_id: this.sessionId }),
-          }
-        );
-
-        if (response.ok) {
-          console.log("✅ D-ID stream deleted successfully");
-        } else {
-          console.warn(
-            `⚠️ Failed to delete stream: ${response.status} ${response.statusText}`
-          );
-        }
+        await fetch(`${this.config.url}/talks/streams/${this.streamId}`, {
+          method: "DELETE",
+          headers: {
+            Authorization: `Basic ${this.config.key}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ session_id: this.sessionId }),
+        });
+        console.log("✅ Stream deleted successfully");
       } catch (error) {
-        console.error("❌ Failed to delete D-ID stream:", error);
+        console.error("❌ Failed to delete stream:", error);
       }
-    } else {
-      console.log("ℹ️ No active stream to delete");
     }
 
-    // Clean up peer connection and state
     this.cleanup();
-    console.log("✅ D-ID service destruction complete");
   }
 
   setPresenter(agentName) {
@@ -468,41 +374,6 @@ class DIDStreamingService {
 
     // Return specific presenter or default fallback
     return presenterUrl;
-  }
-
-  isStreamHealthy() {
-    // Check if stream is still valid (under 4 minutes old and less than 20 requests)
-    if (!this.streamCreatedAt) return false;
-
-    const streamAge = Date.now() - this.streamCreatedAt;
-    const maxStreamAge = 4 * 60 * 1000; // 4 minutes (leave buffer before 5 min timeout)
-    const maxRequests = 20; // Reasonable limit for requests per stream
-
-    const isHealthy =
-      streamAge < maxStreamAge && this.streamRequestCount < maxRequests;
-
-    if (!isHealthy) {
-      console.log(
-        `⚠️ Stream unhealthy - Age: ${Math.floor(
-          streamAge / 1000
-        )}s, Requests: ${this.streamRequestCount}`
-      );
-    }
-
-    return isHealthy;
-  }
-
-  async ensureHealthyStream() {
-    if (!this.isStreamHealthy()) {
-      console.log("🔄 Stream needs refresh, reconnecting...");
-      await this.reconnect();
-    }
-  }
-
-  async reconnect() {
-    console.log("🔄 Reconnecting to D-ID...");
-    this.cleanup();
-    return await this.connect();
   }
 }
 
