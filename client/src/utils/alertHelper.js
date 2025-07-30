@@ -10,6 +10,16 @@ export const showError = (message = "Something went wrong!", title = "Error") =>
     });
 };
 
+// Show a standard error alert
+export const showInfo = (message = "This feature is under development.", title = "Info") => {
+    Swal.fire({
+        icon: 'info',
+        title: title,
+        text: message,
+        confirmButtonColor: '#d33',
+    });
+};
+
 export const showSuccess = (message = "Success!", title = "Success") => {
     Swal.fire({
         toast: true,

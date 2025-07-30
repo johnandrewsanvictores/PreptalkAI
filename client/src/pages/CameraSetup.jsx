@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import PublicLayout from "../layout/PublicLayout.jsx";
 import { useNavigate, useLocation } from "react-router-dom";
 import {useAuth} from "../context/AuthContext.jsx";
+import {showInfo} from "../utils/alertHelper.js";
 
 export default function CameraSetup() {
   const navigate = useNavigate();
@@ -90,6 +91,14 @@ export default function CameraSetup() {
     return null;
   }
 
+  useEffect(() => {
+    return () => {
+      if (stream) {
+        stream.getTracks().forEach((track) => track.stop());
+      }
+    };
+  }, [stream]);
+
   return (
     <PublicLayout>
       <div className="min-h-screen flex flex-col bg-[#f8fafc]">
@@ -175,7 +184,8 @@ export default function CameraSetup() {
                 <button
                   className="bg-blue-600 hover:bg-blue-700 text-white px-12 py-4 rounded-full font-semibold text-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
                   onClick={() =>
-                    navigate("/interview", { state: { interviewSettings } })
+                    //navigate("/interview", { state: { interviewSettings } })
+                      showInfo("We're still working on this!", "Coming Soon")
                   }
                 >
                   Start Interview
