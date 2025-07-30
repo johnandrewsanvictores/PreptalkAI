@@ -7,11 +7,11 @@ const pricingPlans = [
     name: "Starter Pack",
     price: "₱100",
     credits: 10,
-    pricePerCredit: "₱20 per credit",
+    pricePerCredit: "₱10 per credit",
     features: [
-      "10 Interview session",
-      "Basic Performance Analytics",
-      "Standard Question Bank",
+      "10 AI interview sessions",
+      "Basic performance analytics",
+      "Access to standard question bank",
     ],
     isPopular: false,
   },
@@ -19,11 +19,11 @@ const pricingPlans = [
     name: "Professional Pack",
     price: "₱500",
     credits: 60,
-    pricePerCredit: "₱20 per credit",
+    pricePerCredit: "₱8.33 per credit",
     features: [
-      "10 Interview session",
-      "Basic Performance Analytics",
-      "Standard Question Bank",
+      "60 AI interview sessions",
+      "Advanced analytics with feedback",
+      "Access to all question categories",
     ],
     isPopular: true,
   },
@@ -31,15 +31,16 @@ const pricingPlans = [
     name: "Enterprise Pack",
     price: "₱1000",
     credits: 150,
-    pricePerCredit: "₱20 per credit",
+    pricePerCredit: "₱6.67 per credit",
     features: [
-      "10 Interview session",
-      "Basic Performance Analytics",
-      "Standard Question Bank",
+      "150 AI interview sessions",
+      "In-depth performance reports",
+      "Custom question sets & priority support",
     ],
     isPopular: false,
   },
 ];
+
 
 const transactionHistory = [
   {
