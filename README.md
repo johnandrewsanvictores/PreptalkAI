@@ -38,18 +38,37 @@
 ## 📁 Folder Structure
 
 ```
-root/
-├── client/         # React frontend (Vite)
+/root
+├── .idea/
+│   └── inspectionProfiles/
+├── client/
+│   ├── public/
+│   │   ├── img/
+│   │   └── video/
 │   ├── src/
-│   │   ├── pages/          # Routes (Upload, Dashboard, etc.)
-│   │   └── components/     # Shared UI components
-│   └── vite.config.js
-├── server/         # Express backend
-│   ├── routes/             # API endpoints
-│   ├── controllers/        # Logic layer
-│   └── index.js            # Entry point
-├── .env files
-└── README.md
+│   │   ├── assets/
+│   │   ├── components/
+│   │   │   ├── modals/
+│   │   │   ├── navigation/
+│   │   │   ├── section/
+│   │   │   └── shared/
+│   │   ├── context/
+│   │   ├── data/
+│   │   ├── hooks/
+│   │   ├── layout/
+│   │   ├── pages/
+│   │   └── utils/
+│   └── .env
+├── server/
+│   ├── config/
+│   ├── controllers/
+│   ├── middleware/
+│   ├── models/
+│   ├── routes/
+│   ├── uploads/
+│   └── utils/
+│   └── .env
+
 ```
 
 ---
@@ -113,7 +132,7 @@ npm run dev
 ```
 
 Visit the app locally at:  
-🌐 `http://localhost:3000`
+🌐 `http://localhost:5173`
 
 ---
 
@@ -124,13 +143,13 @@ In Google Cloud Console, for your OAuth Client ID:
 - **Authorized JavaScript Origins:**
   ```
   http://localhost:3000
-  https://preptalkai-ruddy.vercel.app
+  https://your-live-frontend.com (optional)
   ```
 
 - **Authorized Redirect URIs:**
   ```
   http://localhost:3000/auth/google/callback
-  https://your-live-backend.com/auth/google/callback
+  https://your-live-backend.com/auth/google/callback (optional)
   ```
 
 > Ensure live backend URL is correctly set when deployed.
