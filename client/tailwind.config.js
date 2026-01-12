@@ -1,10 +1,7 @@
 // tailwind.config.js
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: [
-    "./index.html",
-    "./src/**/*.{js,jsx,ts,tsx}",
-  ],
+  content: ["./index.html", "./src/**/*.{js,jsx,ts,tsx}"],
   theme: {
     extend: {
       colors: {
@@ -14,6 +11,8 @@ module.exports = {
         subHeadingText: "#4F5D75",
         primary: "#2F80ED",
         red: "#DE5656",
+        green: "#52E081",
+        brown: "#DDAE86",
       },
       fontSize: {
         h1: "3.815rem",
@@ -26,9 +25,25 @@ module.exports = {
         small: "0.8rem",
       },
       fontFamily: {
-        nunito: ['"Nunito"', 'sans-serif'],
+        nunito: ['"Nunito"', "sans-serif"],
+      },
+      animation: {
+        "fade-in-up": "fadeInUp 0.7s ease-out forwards",
+        "bounce-slow": "bounce 2s infinite",
+      },
+      keyframes: {
+        fadeInUp: {
+          "0%": {
+            opacity: "0",
+            transform: "translateY(30px)",
+          },
+          "100%": {
+            opacity: "1",
+            transform: "translateY(0)",
+          },
+        },
       },
     },
   },
   plugins: [require("tailwindcss-animate")],
-}
+};
